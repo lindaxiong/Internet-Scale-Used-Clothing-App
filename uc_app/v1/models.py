@@ -46,21 +46,23 @@ class Item(models.Model):
     # item = Item.objects.get(id = __)
     # item.buyer = request.User
 
-    # brand = models.CharField(max_Length=100)
+    brand = models.CharField(max_Length=100)
     #
     # item_rating_stars = models.IntegerField()
     #
-    # description = models.TextField()image_url = models.CharField(max_length=100)
+    description = models.TextField()image_url = models.CharField(max_length=100)
+    ITEM_SIZES = (('S', 'Small'),('M', 'Medium'),('L', 'Large'),('OS', 'One Size'),('Other', 'Other'))
+    item_size = models.CharField(max_length = 15, choices=ITEM_SIZES)
 
-    # ITEM_SIZES = (('S', 'Small'),('M', 'Medium'),('L', 'Large'),('OS', 'One Size'),('Other', 'Other'))
-    # item_size = models.CharField(max_length = 15, choices=ITEM_SIZES)
-
-    # ITEM_TYPES = (
-    # 	('Top', 'Top'),
-    # 	('Bottom', 'Bottom'),
-    # 	('Other', 'Other')
-    # )
-    # item_type = models.CharField(max_Length= 15, choices = ITEM_TYPES)
+    ITEM_TYPES = (
+     	('Top', 'Top'),
+    	('Bottom', 'Bottom'),
+        ('Dress', 'Dress'),
+        ('Footwear', 'Footwear'),
+        ('Accessory', 'Accessory'),
+    	('Other', 'Other')
+    )
+    item_type = models.CharField(max_Length= 15, choices = ITEM_TYPES)
 
 
 # class Review(models.Model):
@@ -68,11 +70,11 @@ class Item(models.Model):
 #     title = models.CharField(max_length=200)
 #     body = models.TextField()
 #
-#     ##########
-#     # POST TIME STAMP
-#     ##########
+#      ##########
+#      # POST TIME STAMP
+#      ##########
 #     posted_on = models.DateTimeField(
-#             default=timezone.now)
+#            default=timezone.now)
 #
 #     def post(self):
 #         self.posted_on = timezone.now()
@@ -100,4 +102,3 @@ class Item(models.Model):
 #
 #     class Meta:
 #         abstract = True
-

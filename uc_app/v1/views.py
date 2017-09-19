@@ -21,7 +21,14 @@ def create_user(request):
             # Return user ID JSON
 
 #TODO: Error Checking: ID not found, raise problem if form is NOT valid.
-def access_user(request, user_id):
+def get_user(request, user_id):
+    if request.method == "GET":
+        user_instance = User.object.get(pk=user_id)
+        #JSON Response requires a dictionary input
+        #TODO: Think about what fields you *specifically* want to return. Must be a dictionary.
+        return JsonResponse(model_to_dict(user_instance))
+
+def edit_user(request, user_id):
     if request.method == "POST":
         # Finds the specific instance of the user
         #TODO: What if ID not found?
@@ -32,12 +39,6 @@ def access_user(request, user_id):
         #TODO: Add JSON response indicating success
         if user.is_valid():
             user.save()
-    if request.method == "GET":
-        user_instance = User.object.get(pk=user_id)
-        #JSON Response requires a dictionary input
-        #TODO: Think about what fields you *specifically* want to return. Must be a dictionary.
-        return JsonResponse(model_to_dict(user_instance))
-
 
 #TODO: Repeat above steps on the following - should be near-identitical
 def create_item(request):
@@ -46,12 +47,14 @@ def create_item(request):
         if form.is_valid:
             form.save()
 
-def access_item(reuqest, item_id):
+def get_item(reuqest, item_id):
+    if request.method == "GET":
+        item_instance = Item.object.get(pk=user_id)
+        return JsonResponse(model_to_dict(item_instance))
+
+def edit_item(request, item_id):
     if request.method == "POST":
         item_instance = Item.objects.get(pk=item_id)
         item = ItemForm(request.POST, instance=user_instance)
         if item.is_valid():
             item.save()
-    if request.method == "GET":
-        item_instance = Item.object.get(pk=user_id)
-        return JsonResponse(model_to_dict(item_instance))

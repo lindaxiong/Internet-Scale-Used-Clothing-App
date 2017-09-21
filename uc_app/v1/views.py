@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+import json
 
 # Create your views here.
 
@@ -8,6 +10,8 @@ def homepage(request):
     return HttpResponse("Basic Homepage")
 
 #TODO: Error Checking - shouldn't be able to do a GET method when creating - SEE: DECORATORS!!
+
+@require_POST()
 #TODO: Return JSON with the USER ID so you can use it.
 def create_user(request):
     #Ensure it's a POST request - need info to populate fields.
@@ -19,8 +23,13 @@ def create_user(request):
             #save the instance
             form.save()
             # Return user ID JSON
-
+	    response = {}
+	    response['userID'] = form.pk
+	    return JsonResponse(response)		
 #TODO: Error Checking: ID not found, raise problem if form is NOT valid.
+	else:
+	    
+
 def get_user(request, user_id):
     if request.method == "GET":
         user_instance = User.object.get(pk=user_id)
@@ -41,13 +50,18 @@ def edit_user(request, user_id):
             user.save()
 
 #TODO: Repeat above steps on the following - should be near-identitical
+@require_POST()
 def create_item(request):
     if request.method == "POST":
         form = ItemForm(request.POST)
         if form.is_valid:
             form.save()
+	    response = {}
+            response['userID'] = form.pk
+            return JsonResponse(response)
 
-def get_item(reuqest, item_id):
+
+def get_item(request, item_id):
     if request.method == "GET":
         item_instance = Item.object.get(pk=user_id)
         return JsonResponse(model_to_dict(item_instance))

@@ -28,7 +28,8 @@ def create_user(request):
 	    return JsonResponse(response)		
 #TODO: Error Checking: ID not found, raise problem if form is NOT valid.
 	else:
-	    
+	#not sure what error respones we're supposed to be doing here, this is tentative
+	    raise ValidationError(_('Invalid form'))	    
 
 def get_user(request, user_id):
     if request.method == "GET":

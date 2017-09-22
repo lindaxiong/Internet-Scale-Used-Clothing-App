@@ -3,7 +3,7 @@ models:
     external_links:
       -  mysql:db
     volumes:
-      - ./:/app
+      - ./uc_app:/app
     ports:
       - "8001:8000"
-    command: bash -c "python ./uc_app/manage.py makemigrations && python ./uc_app/manage.py migrate && python ./uc_app/manage.py loaddata ./uc_app/db.json && mod_wsgi-express start-server --working-directory ./ --reload-on-changes ./uc_app/uc_app/wsgi.py"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --working-directory ./ --reload-on-changes uc_app/wsgi.py"

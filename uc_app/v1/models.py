@@ -1,16 +1,5 @@
 from django.db import models
-
-
-class User(models.Model):
-    first_name = models.CharField(max_length=30)
-
-    last_name = models.CharField(max_length=30)
-
-    username = models.CharField(max_length = 100, unique=True)   # django automatically create iD as primary key
-
-    password = models.CharField(max_length=100)
-
-    item_owned = models.ManyToManyField(Item)
+from django.core.validators import *
 
     # user_rating_stars = models.IntegerField()
     # ############
@@ -22,7 +11,14 @@ class User(models.Model):
     # # stores seller earning (can transfer to bank later) & promotion credit
     # ############
     # balance = models.DecimalField(default=0.00, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+class User(models.Model):
+    first_name = models.CharField(max_length=30)
 
+    last_name = models.CharField(max_length=30)
+
+    username = models.CharField(max_length = 100, unique=True)   # django automatically create iD as primary key
+
+    password = models.CharField(max_length=100)
 
 class Item(models.Model):
     item_name = models.CharField(max_length=100)
@@ -32,7 +28,7 @@ class Item(models.Model):
     ###########
     # SELLER
     ###########
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)  # 1 item have 1 seller
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")  # 1 item have 1 seller
     #  when creating item, can indicate seller=username in Item field
     #  in views:
     #  item = Item(..... seller = __) to indicate which user is selling this item
@@ -40,17 +36,18 @@ class Item(models.Model):
     ###########
     # BUYER
     ###########
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # 1 item has 1 seller
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="buyer")  # 1 item has 1 seller
     # buyer could be null when the item is being listed
     # to indicate buyer, in views:
     # item = Item.objects.get(id = __)
     # item.buyer = request.User
 
-    brand = models.CharField(max_Length=100)
+    brand = models.CharField(max_length=100)
     #
     # item_rating_stars = models.IntegerField()
     #
-    description = models.TextField()image_url = models.CharField(max_length=100)
+    description = models.TextField()
+    image_url = models.CharField(max_length=100)
     ITEM_SIZES = (('S', 'Small'),('M', 'Medium'),('L', 'Large'),('OS', 'One Size'),('Other', 'Other'))
     item_size = models.CharField(max_length = 15, choices=ITEM_SIZES)
 
@@ -62,7 +59,7 @@ class Item(models.Model):
         ('Accessory', 'Accessory'),
     	('Other', 'Other')
     )
-    item_type = models.CharField(max_Length= 15, choices = ITEM_TYPES)
+    item_type = models.CharField(max_length= 15, choices = ITEM_TYPES)
 
 
 # class Review(models.Model):

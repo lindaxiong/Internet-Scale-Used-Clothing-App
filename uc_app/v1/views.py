@@ -1,75 +1,101 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+from django.core.exceptions import *
+from django.views.decorators.http import *
 import json
 
 # Create your views here.
 
-def homepage(request):
-    return HttpResponse("Basic Homepage")
-
-#TODO: Error Checking - shouldn't be able to do a GET method when creating - SEE: DECORATORS!!
-
-@require_POST()
-#TODO: Return JSON with the USER ID so you can use it.
+@require_POST
 def create_user(request):
     #Ensure it's a POST request - need info to populate fields.
     if request.method == "POST":
         # Use the request data to populate the form.
         form = UserForm(request.POST)
         # If the form is valid ...
+        response = {}
         if form.is_valid():
             #save the instance
             form.save()
             # Return user ID JSON
-	    response = {}
-	    response['userID'] = form.pk
-	    return JsonResponse(response)		
-#TODO: Error Checking: ID not found, raise problem if form is NOT valid.
-	else:
-	#not sure what error respones we're supposed to be doing here, this is tentative
-	    raise ValidationError(_('Invalid form'))	    
+            response = JsonResponse({'userID':form.pk})
+        else:
+            # Return an error response if invalid
+            message = "Invalid user form submitted!"
+            response = JsonResponse({'status':'false', 'message':message}, status=500)
+        return response
 
-def get_user(request, user_id):
+@require_GET
+def get_user(request, user_id=0):
     if request.method == "GET":
-        user_instance = User.object.get(pk=user_id)
+        try:
+            user = User.object.get(pk=user_id)
+            response = JsonResponse(model_to_dict(user))
+        except ObjectDoesNotExist:
+            message = "Object not found!"
+            response = JsonResponse({'status':'false', 'message':message}, status=404)
         #JSON Response requires a dictionary input
-        #TODO: Think about what fields you *specifically* want to return. Must be a dictionary.
-        return JsonResponse(model_to_dict(user_instance))
+        return response
 
-def edit_user(request, user_id):
+@require_POST
+def edit_user(request, user_id=0):
     if request.method == "POST":
         # Finds the specific instance of the user
-        #TODO: What if ID not found?
-        user_instance = User.objects.get(pk=user_id)
-        #TODO: Change from resubmitting an entire form to editing single fields if necessary
-        #TODO: Add restrictions for changing certain fields (not *super* relevant right now)
+        try:
+            user_instance = User.objects.get(pk=user_id)
+        except ObjectDoesNotExist:
+            message = "Object not found!"
+            return JsonResponse({'status':'false', 'message':message}, status=500)
         user = UserForm(request.POST, instance=user_instance)
-        #TODO: Add JSON response indicating success
         if user.is_valid():
             user.save()
+            return JsonResponse({'userID':user.pk})
+        else:
+            message = "Invalid change."
+            return JsonResponse({'status':'false', 'message':message}, status=500)
 
-#TODO: Repeat above steps on the following - should be near-identitical
-@require_POST()
+@require_POST
 def create_item(request):
     if request.method == "POST":
         form = ItemForm(request.POST)
-        if form.is_valid:
+        response = {}
+        if form.is_valid():
+            #save the instance
             form.save()
-	    response = {}
-            response['userID'] = form.pk
-            return JsonResponse(response)
+            # Return user ID JSON
+            response = JsonResponse({'itemID':form.pk})
+        else:
+            # Return an error response if invalid
+            message = "Invalid item form submitted!"
+            response = JsonResponse({'status':'false', 'message':message}, status=500)
+        return response
 
-
-def get_item(request, item_id):
+@require_GET
+def get_item(request, item_id=0):
     if request.method == "GET":
-        item_instance = Item.object.get(pk=user_id)
-        return JsonResponse(model_to_dict(item_instance))
+        try:
+            item = Item.object.get(pk=user_id)
+            response = JsonResponse(model_to_dict(item))
+        except ObjectDoesNotExist:
+            message = "Item not found!"
+            response = JsonResponse({'status':'false', 'message':message}, status=500)
+        #JSON Response requires a dictionary input
+        return response
 
-def edit_item(request, item_id):
+@require_POST
+def edit_item(request, item_id=0):
     if request.method == "POST":
-        item_instance = Item.objects.get(pk=item_id)
-        item = ItemForm(request.POST, instance=user_instance)
+        # Finds the specific instance of the user
+        try:
+            item_instance = Item.objects.get(pk=item_id)
+        except ObjectDoesNotExist:
+            message = "Object not found!"
+            return JsonResponse({'status':'false', 'message':message}, status=500)
+        item = ItemForm(request.POST, instance=item_instance)
         if item.is_valid():
             item.save()
+            return JsonResponse({'itemID':item.pk})
+        else:
+            message = "Invalid change."
+            return JsonResponse({'status':'false', 'message':message}, status=500)

@@ -2,8 +2,8 @@
     "fields": {
       "item_name": "shirt",
       "item_price": "10.20",
-      "seller": "Linda Xiong",
-      "buyer": "",
+      "seller": 24,
+      "buyer": 25,
       "brand": "MK",
       "description": "makes you happy",
       "image_url": "",

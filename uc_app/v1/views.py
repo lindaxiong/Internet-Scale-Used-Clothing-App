@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from v1.models import *
 from v1.forms import *
+from django.forms import *
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import *
@@ -18,13 +19,12 @@ def create_user(request):
         response = {}
         if form.is_valid():
             #save the instance
-            form.save()
+            saved_form = form.save()
             # Return user ID JSON
-            response = JsonResponse({'userID':form.pk})
+            response = JsonResponse({'userID':saved_form.pk})
         else:
             # Return an error response if invalid
-            response = JsonResponse(form.errors.as_json())
-            response.status_code = 500
+            response = HttpResponse(form.errors.as_json(), content_type="application/json", status=500)
         return response
     else:
         message = "Expected POST request to create user object - other type of request recieved"
@@ -33,7 +33,7 @@ def create_user(request):
 def get_user(request, user_id=0):
     if request.method == "GET":
         try:
-            user = User.object.get(pk=user_id)
+            user = User.objects.get(pk=user_id)
             response = JsonResponse(model_to_dict(user))
         except ObjectDoesNotExist:
             message = "User objecat at ID " + str(user_id) + " not found!"
@@ -57,8 +57,7 @@ def edit_user(request, user_id=0):
             user.save()
             return JsonResponse({'userID':user.pk})
         else:
-            response = JsonResponse(user.errors.as_json())
-            response.status_code = 500
+            response = HttpResponse(user.errors.as_json(), content_type="application/json", status=500)
             return response
     else:
         message = "Expected POST request to modify user object - other type of request recieved"
@@ -80,13 +79,12 @@ def create_item(request):
         response = {}
         if form.is_valid():
             #save the instance
-            form.save()
+            saved_form = form.save()
             # Return user ID JSON
-            response = JsonResponse({'itemID':form.pk})
+            response = JsonResponse({'itemID':saved_form.pk})
         else:
             # Return an error response if invalid
-            response = JsonResponse(form.errors.as_json())
-            response.status_code = 500
+            response = HttpResponse(form.errors.as_json(), content_type="application/json", status=500)
         return response
     else:
         message = "Expected POST request to create item objet - other type of request recieved"
@@ -95,7 +93,7 @@ def create_item(request):
 def get_item(request, item_id=0):
     if request.method == "GET":
         try:
-            item = Item.object.get(pk=user_id)
+            item = Item.objects.get(pk=item_id)
             response = JsonResponse(model_to_dict(item))
         except ObjectDoesNotExist:
             message = "Item at ID " + str(item_id) + " not found!"
@@ -119,8 +117,7 @@ def edit_item(request, item_id=0):
             item.save()
             return JsonResponse({'itemID':item.pk})
         else:
-            response = JsonResponse(item.errors.as_json())
-            response.status_code = 500
+            response = HttpResponse(item.errors.as_json(), content_type="application/json", status=500)
             return response
     else:
         message = "Expected POST request to modify item object - other type of request recieved"

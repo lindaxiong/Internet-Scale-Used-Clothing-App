@@ -26,15 +26,8 @@ class Item(models.Model):
     item_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")  # 1 item have 1 seller
-    #  when creating item, can indicate seller=username in Item field
-    #  in views:
-    #  item = Item(..... seller = __) to indicate which user is selling this item
 
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")  # 1 item has 1 seller
-    # buyer could be null when the item is being listed
-    # to indicate buyer, in views:
-    # item = Item.objects.get(id = __)
-    # item.buyer = request.User
 
     brand = models.CharField(max_length=100)
     #
@@ -42,7 +35,12 @@ class Item(models.Model):
     #
     description = models.TextField()
     image_url = models.CharField(max_length=100)
-    ITEM_SIZES = (('S', 'Small'),('M', 'Medium'),('L', 'Large'),('OS', 'One Size'),('Other', 'Other'))
+    ITEM_SIZES = (
+    ('S', 'Small'),
+    ('M', 'Medium'),
+    ('L', 'Large'),
+    ('OS', 'One Size'),
+    ('Other', 'Other'))
     item_size = models.CharField(max_length = 15, choices=ITEM_SIZES)
 
     ITEM_TYPES = (

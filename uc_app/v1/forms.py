@@ -1,4 +1,5 @@
 from django import forms
+from v1.models import *
 from django.forms import ModelForm
 
 #Forms are a short-cut for rendering information "forms" on a web page that can be easily returned in a POST request.
@@ -6,7 +7,7 @@ from django.forms import ModelForm
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password', 'item_owned']
+        fields = ['first_name', 'last_name', 'username', 'password']
 
 class ItemForm(forms.ModelForm):
     class Meta:

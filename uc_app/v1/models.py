@@ -25,18 +25,12 @@ class Item(models.Model):
 
     item_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
-    ###########
-    # SELLER
-    ###########
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")  # 1 item have 1 seller
     #  when creating item, can indicate seller=username in Item field
     #  in views:
     #  item = Item(..... seller = __) to indicate which user is selling this item
 
-    ###########
-    # BUYER
-    ###########
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="buyer")  # 1 item has 1 seller
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")  # 1 item has 1 seller
     # buyer could be null when the item is being listed
     # to indicate buyer, in views:
     # item = Item.objects.get(id = __)

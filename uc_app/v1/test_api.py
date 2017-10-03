@@ -4,6 +4,7 @@ from v1.models import User, Item
 from django.core import serializers
 from django.http import JsonResponse
 from django.forms import model_to_dict
+from django.core.exceptions import *
 
 class CreateUserTest(TestCase):
     def setUp(self):
@@ -14,6 +15,7 @@ class CreateUserTest(TestCase):
         self.assertEquals(response.status_code, 500)
 
     def test_user_get_not_post(self):
+        #Sends a get method instead of a post method
         response = self.c.get(reverse('create-user'), {"first_name":"John", "last_name":"Smith", "username":"jsmith", "password":"h$4"})
         self.assertEquals(response.status_code, 500)
 
@@ -31,14 +33,68 @@ class GetUserTest(TestCase):
         response = self.c.get(reverse('get-user', kwargs={'user_id':(self.id+1)}))
         self.assertEquals(response.status_code, 500)
 
-    def test_get_user_post(self):
+    def test_get_user_post_not_get(self):
         response = self.c.post(reverse('get-user', kwargs={'user_id':(self.id)}))
         self.assertEquals(response.status_code, 500)
 
     def test_get_user_valid(self):
         response = self.c.get(reverse('get-user', kwargs={'user_id':(self.id)}))
         self.assertEquals(response.status_code, 200)
+        #Replicates the JSON Response format as the easiest way to verify output validity.
         self.assertEquals(response.content, JsonResponse(model_to_dict(User.objects.get(pk=self.id))).content)
+
+class EditUserTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        self.id = usr.pk
+
+    def test_edit_user_not_found(self):
+        response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id+1)}), {"first_name":"John", "last_name":"Smith", "username":"jsmith1", "password":"h$4"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_user_get_not_post(self):
+        response = self.c.get(reverse('edit-user', kwargs={'user_id':(self.id)}), {"first_name":"John", "last_name":"Smith", "username":"jsmith1", "password":"h$4"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_user_invalid_change(self):
+        response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id)}), {"first_name":"John", "last_name":"Smithfo;ghaiehldjoiahrlknfpihaorfavahioejlnfahiojenlfasdiv;ho", "username":"jsmith1", "password":"h$4"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_user_valid(self):
+        response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id)}), {"first_name":"John", "last_name":"Smith", "username":"jsmith1", "password":"h$4"})
+        self.assertEquals(response.status_code, 200)
+        #Double-checks that the ID's match and the field was changed accordingly.
+        self.assertEquals(response.content, JsonResponse({'userID':self.id}).content)
+        self.assertEquals(User.objects.get(pk=self.id).username, "jsmith1")
+
+class DeleteUserTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr1 = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        usr2 = User.objects.create(first_name="John", last_name="Rolf", username="jrolf", password="dxdd")
+        itm1 = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr1, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
+        itm2 = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr2, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
+        itm2.buyer = usr1
+        self.id = usr1.pk
+        self.item_id = itm1.pk
+        self.item2_id = itm2.pk
+        self.usr2_id = usr2.pk
+
+    def test_del_user_not_found(self):
+        response = self.c.post(reverse('delete-user', kwargs={'user_id':(self.id+7)}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_del_user_success(self):
+        response = self.c.post(reverse('delete-user', kwargs={'user_id':self.id}))
+        self.assertEquals(response.status_code, 200)
+        #Checks to make sure the user and the objects they were selling were deleted
+        with self.assertRaises(ObjectDoesNotExist):
+            User.objects.get(pk=self.id)
+        with self.assertRaises(ObjectDoesNotExist):
+            Item.objects.get(pk=self.item_id)
+        #Checks that it removes user from seller field on other objects
+        self.assertEquals(Item.objects.get(pk=self.item2_id).buyer, None)
 
 class CreateItemTest(TestCase):
     def setUp(self):
@@ -58,25 +114,68 @@ class CreateItemTest(TestCase):
         response = self.c.post(reverse('create-item'), {"item_name":"shirt", "item_price":20.0, "seller":self.id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
         self.assertEqual(response.status_code, 200)
 
-class GetUserTest(TestCase):
+class GetItemTest(TestCase):
     def setUp(self):
         self.c = Client()
         usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
         itm = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
         self.id = itm.pk
 
-    def test_user_not_found(self):
+    def test_item_not_found(self):
         response = self.c.get(reverse('get-item', kwargs={'item_id':(self.id+1)}))
         self.assertEquals(response.status_code, 500)
 
-    def test_get_user_post(self):
+    def test_get_item_post(self):
         response = self.c.post(reverse('get-item', kwargs={'item_id':(self.id)}))
         self.assertEquals(response.status_code, 500)
 
-    def test_get_user_valid(self):
+    def test_get_item_valid(self):
         response = self.c.get(reverse('get-item', kwargs={'item_id':(self.id)}))
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, JsonResponse(model_to_dict(Item.objects.get(pk=self.id))).content)
 
+class EditItemTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        itm = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
+        self.usr_id = usr.pk
+        self.id = itm.pk
+
+    def test_edit_item_not_found(self):
+        response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id+1)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"S", "item_type":"Top"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_item_get_not_post(self):
+        response = self.c.get(reverse('edit-item', kwargs={'item_id':(self.id)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"S", "item_type":"Top"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_item_invalid_change(self):
+        response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"X", "item_type":"Top"})
+        self.assertEquals(response.status_code, 500)
+
+    def test_edit_item_valid(self):
+        response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"S", "item_type":"Top"})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'itemID':self.id}).content)
+        self.assertEquals(Item.objects.get(pk=self.id).item_size, "S")
+
+class DeleteItemTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        itm = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
+        self.usr_id = usr.pk
+        self.id = itm.pk
+
+    def test_del_item_not_found(self):
+        response = self.c.post(reverse('delete-item', kwargs={'item_id':(self.id+1)}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_del_item_success(self):
+        response = self.c.post(reverse('delete-item', kwargs={'item_id':(self.id)}))
+        self.assertEquals(response.status_code, 200)
+        with self.assertRaises(ObjectDoesNotExist):
+            Item.objects.get(pk=self.id)
 
 # Create your tests here.

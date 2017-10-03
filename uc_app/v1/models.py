@@ -16,7 +16,7 @@ class User(models.Model):
 
     last_name = models.CharField(max_length=30)
 
-    username = models.CharField(max_length = 100, unique=True)   # django automatically create iD as primary key
+    username = models.CharField(max_length = 40, unique=True)   # django automatically create iD as primary key
 
     password = models.CharField(max_length=100)
 
@@ -27,7 +27,7 @@ class Item(models.Model):
 
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")  # 1 item have 1 seller
 
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")  # 1 item has 1 seller
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="buyer")  # 1 item has 1 seller
 
     brand = models.CharField(max_length=100)
     #

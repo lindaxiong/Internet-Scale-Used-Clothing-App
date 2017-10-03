@@ -34,7 +34,7 @@ class Item(models.Model):
     # item_rating_stars = models.IntegerField()
     #
     description = models.TextField()
-    image_url = models.CharField(max_length=100)
+    image_url = models.URLField(max_length=300)
     ITEM_SIZES = (
     ('S', 'Small'),
     ('M', 'Medium'),

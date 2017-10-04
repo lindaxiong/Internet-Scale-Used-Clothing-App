@@ -1,4 +1,4 @@
-[{"model":"v1.user",
+[{"model":"uc.user",
   "pk": 1,
   "fields": {
     "first_name":"Jack",
@@ -6,7 +6,7 @@
     "username":"jperales24",
     "password":"223HXX"}
   },
-{"model":"v1.user",
+{"model":"uc.user",
   "pk": 2,
   "fields": {
     "first_name":"Linda",
@@ -14,7 +14,7 @@
     "username":"lxiongxD",
     "password":"ff4shh"}
 },
-{"model":"v1.user",
+{"model":"uc.user",
     "pk": 3,
     "fields": {
       "first_name":"Andrew",
@@ -22,7 +22,7 @@
       "username":"barry.allen",
       "password":"bts360"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":4,
   "fields": {
     "item_name":"Longsleeve T-Shirt",
@@ -31,11 +31,11 @@
     "buyer":null,
     "brand":"American Eagle",
     "description":"Blue with a big logo on the front",
-    "image_url":"https://www.wordans.com/wordansfiles/model_specifications/2015/8/31/121154/121154_original.jpg?1441032179",
+    "image_url":"https://www.wordans.com/wordansfiles/uc_specifications/2015/8/31/121154/121154_original.jpg?1441032179",
     "item_size":"L",
     "item_type":"Top"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":5,
   "fields": {
     "item_name":"Faded Jeans",
@@ -48,7 +48,7 @@
     "item_size":"Other",
     "item_type":"Bottom"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":6,
   "fields": {
     "item_name":"White Vans",

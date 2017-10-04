@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
-from v1.models import User, Item
+from .models import User, Item
 from django.core import serializers
 from django.http import JsonResponse
 from django.forms import model_to_dict

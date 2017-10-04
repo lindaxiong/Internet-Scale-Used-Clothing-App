@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from v1.models import *
-from v1.forms import *
+from .models import *
+from .forms import *
 from django.forms import *
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import *
 from django.views.decorators.http import *
 import json
+
 
 def create_user(request):
     #Ensure it's a POST request - need info to populate fields.
@@ -29,12 +30,13 @@ def create_user(request):
         message = "Expected POST request to create user object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
 
+
 def get_user(request, user_id=0):
     if request.method == "GET":
         try:
             #Find the user instance
             user = User.objects.get(pk=user_id)
-            #format into the user model into a dictionary (necessary for conversion), return as JSON
+            #format into the user uc into a dictionary (necessary for conversion), return as JSON
             response = JsonResponse(model_to_dict(user))
         except ObjectDoesNotExist:
             #If object cannot be found, relay information back with the user's ID.
@@ -47,6 +49,7 @@ def get_user(request, user_id=0):
         message = "Expected GET reqeust to retrieve user object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
 
+
 def edit_user(request, user_id=0):
     if request.method == "POST":
         # Finds the specific instance of the user
@@ -56,7 +59,7 @@ def edit_user(request, user_id=0):
             #If the user can't be found, return the invalid ID and an error message.
             message = "User at ID " + str(user_id) + " not found!"
             return JsonResponse({'status':'false', 'message':message}, status=500)
-        #Use a model form to re-format the request information
+        #Use a uc form to re-format the request information
         user = UserForm(request.POST, instance=user_instance)
         #Check to see if the form is valid (e.g. valid changes were made)
         if user.is_valid():
@@ -73,6 +76,7 @@ def edit_user(request, user_id=0):
         message = "Expected POST request to modify user object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
 
+
 def delete_user(request, user_id=0):
     try:
         #Find the user - if it's found, delete the corresponding user.
@@ -83,6 +87,7 @@ def delete_user(request, user_id=0):
         #Returns the invalid ID if not found.
         message = "User at ID " + str(user_id) + " not found! Deletion failed."
         return JsonResponse({'status':'false', 'message':message}, status=500)
+
 
 #Item methods correspond 1:1 to User methods. Refer to user methods for use-cases.
 
@@ -100,6 +105,7 @@ def create_item(request):
         message = "Expected POST request to create item objet - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
 
+
 def get_item(request, item_id=0):
     if request.method == "GET":
         try:
@@ -112,6 +118,7 @@ def get_item(request, item_id=0):
     else:
         message = "Expected GET request to retrieve item object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
+
 
 def edit_item(request, item_id=0):
     if request.method == "POST":
@@ -130,6 +137,7 @@ def edit_item(request, item_id=0):
     else:
         message = "Expected POST request to modify item object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
+
 
 def delete_item(request, item_id=0):
     try:

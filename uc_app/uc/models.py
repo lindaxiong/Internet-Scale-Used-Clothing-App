@@ -11,6 +11,8 @@ from django.core.validators import *
     # # stores seller earning (can transfer to bank later) & promotion credit
     # ############
     # balance = models.DecimalField(default=0.00, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+
+
 class User(models.Model):
     first_name = models.CharField(max_length=30)
 
@@ -19,6 +21,7 @@ class User(models.Model):
     username = models.CharField(max_length = 40, unique=True)   # django automatically create iD as primary key
 
     password = models.CharField(max_length=100)
+
 
 class Item(models.Model):
     item_name = models.CharField(max_length=100)
@@ -34,7 +37,7 @@ class Item(models.Model):
     # item_rating_stars = models.IntegerField()
     #
     description = models.TextField()
-    image_url = models.URLField(max_length=300)
+    image_url = models.URLField(max_length=1000)
     ITEM_SIZES = (
     ('S', 'Small'),
     ('M', 'Medium'),

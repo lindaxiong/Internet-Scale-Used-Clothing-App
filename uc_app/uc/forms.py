@@ -1,5 +1,5 @@
 from django import forms
-from v1.models import *
+from .models import *
 from django.forms import ModelForm
 
 #Forms are a short-cut for rendering information "forms" on a web page that can be easily returned in a POST request.

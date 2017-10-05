@@ -8,22 +8,78 @@
 
 </head>
 <body>
-<div class="container">
-<div class="row">
-	<h1>Welcome to our used clothing app!</h1>
-</div>
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-3">Used Clothing App</h1>
+      <p class="lead">A site for buying and selling used clothes.</p>
+    </div>
+  </div>
 
-<div class="row">
-	<h2>Newest Items</h2>
+<div class="panel panel-default">
+	<h3 class="panel-heading">Tops</h3>
+<div class="panel-body">
+	{% if tops %}
+	{% for item in tops.data %}
+  {% if forloop.first %}<div class="row">{% endif %}
+  <div class="col-xs-3">
+  <div class="card" style="width: 20rem;">
+  <img class="card-img-top" src={{ item.image_url }} length="200" width="175">
+  <div class="card-block">
+    <h4 class="card-title"> {{ item.item_name }}</h4>
+    <p class="card-text"> {{ item.description }}</p>
+    <a href="{% url 'display-item' item_id=item.item_id %}" class="btn btn-primary">View Item</a>
+  </div>
 </div>
-	{% if data %}
-	{% for item in data %}
-	<tr>{{item.item_name}} | </tr>
-	<tr>{{ item.item_type }} | </tr>
-	<tr>Seller: {{ item.seller_username }} | </tr> <!-- Placeholder link to show what the home page looks like, need to fix link url itself -->
-	<tr><a href="{% url 'display-item' item_id=item.item_id %}"> Item Page </a></tr></br>
+</div>
+  {% if forloop.last %}</div>{% endif %}
 	{% endfor %}
 	{% endif %}
+</div>
+</div>
+<div class="panel panel-default">
+	<h3 class="panel-heading">Bottoms</h3>
+<div class="panel-body">
+  	{% if bottoms %}
+  	{% for item in bottoms.data %}
+    {% if forloop.first %}<div class="row">{% endif %}
+    <div class="col-xs-3">
+    <div class="card" style="width: 20rem;">
+    <img class="card-img-top" src={{ item.image_url }} length="200" width="175">
+    <div class="card-block">
+      <h4 class="card-title"> {{ item.item_name }}</h4>
+      <p class="card-text"> {{ item.description }}</p>
+      <a href="{% url 'display-item' item_id=item.item_id %}" class="btn btn-primary">View Item</a>
+    </div>
+  </div>
+</div>
+    {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
+  	{% endif %}
+  </div>
+</div>
+<div class="panel panel-default">
+	<h3 class="panel-heading">Shoes</h3>
+<div class="panel-body">
+  <div class="card-deck">
+    	{% if shoes %}
+    	{% for item in shoes.data %}
+      {% if forloop.first %}<div class="row">{% endif %}
+      <div class="col-xs-3">
+      <div class="card" style="width: 20rem;">
+      <img class="card-img-top" src={{ item.image_url }} length="200" width="175">
+      <div class="card-block">
+        <h4 class="card-title"> {{ item.item_name }}</h4>
+        <p class="card-text"> {{ item.description }}</p>
+        <a href="{% url 'display-item' item_id=item.item_id %}" class="btn btn-primary">View Item</a>
+      </div>
+    </div>
+  </div>
+      {% if forloop.last %}</div>{% endif %}
+      {% endfor %}
+    	{% endif %}
+    </div>
+</div>
+</div>
 </div>
 </body>
 </html>

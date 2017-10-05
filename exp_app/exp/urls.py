@@ -6,5 +6,5 @@ from . import views
 # because i just load the 3 items from fixtures)
 urlpatterns = [
     url(r'^items/(?P<item_id>[0-9a-z]+)/$', views.get_item_page_info, name='item-page-info'),
-    url(r'^items/', views.get_top_items, name='top-results')
+    url(r'^items/get_by/(?P<field>[A-Za-z_]+)/(?P<criteria>[A-Za-z0-9]+)/$', views.get_filtered_items, name='filtered-results')
 ]

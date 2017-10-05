@@ -5,6 +5,7 @@ from django.forms import *
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import *
+from django.core import serializers
 from django.views.decorators.http import *
 import json
 
@@ -123,6 +124,26 @@ def get_item(request, item_id=0):
         message = "Expected GET request to retrieve item object - other type of request recieved"
         return JsonResponse({'status':'false','message':message}, status=500)
 
+def get_item_by(request, field="", criteria=""):
+    if request.method == "GET":
+        items_as_json = {}
+        if field == "item_size":
+            items_as_json = serializers.serialize('json', Item.objects.filter(item_size=criteria))
+        elif field == "item_type":
+            items_as_json = serializers.serialize('json', Item.objects.filter(item_type=criteria))
+        elif field == "brand":
+            items_as_json = serializers.serialize('json', Item.objects.filter(item_type=criteria))
+        elif field == "item_price":
+            items_as_json = serializers.serialize('json', Item.objects.filter(item_type__lte=criteria))
+        elif field == "description":
+            items_as_json = serializers.serialize('json', Item.objects.filter(description__icontains=criteria))
+        else:
+            items_as_json={'status':'false', 'message':'Not handled'}
+            return JsonResponse(items_as_json, status=500)
+        return HttpResponse(items_as_json, content_type="json")
+    else:
+        message = "Expected GET request to retrieve item object - other type of request recieved"
+        return JsonResponse({'status':'false','message':message}, status=500)
 
 def edit_item(request, item_id=0):
     if request.method == "POST":

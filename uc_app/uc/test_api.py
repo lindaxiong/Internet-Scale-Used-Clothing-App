@@ -134,6 +134,27 @@ class GetItemTest(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, JsonResponse(model_to_dict(Item.objects.get(pk=self.id))).content)
 
+class GetItemByTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        itm1 = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
+        itm2 = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="S", item_type="Top")
+        itm3 = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="S", item_type="Top")
+
+    def test_get_item_post(self):
+        response = self.c.post(reverse('get-item-by', kwargs={'field':'item_size', 'criteria':'S'}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_get_item_invalid_field(self):
+        response = self.c.get(reverse('get-item-by', kwargs={'field':'item_feel', 'criteria':'S'}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_get_items_by_valid(self):
+        response = self.c.get(reverse('get-item-by', kwargs={'field':'item_size', 'criteria':'S'}))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, bytes(serializers.serialize('json', Item.objects.filter(item_size='S')), 'utf-8'))
+
 class EditItemTest(TestCase):
     def setUp(self):
         self.c = Client()

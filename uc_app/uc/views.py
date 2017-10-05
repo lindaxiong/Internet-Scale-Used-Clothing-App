@@ -38,7 +38,7 @@ def get_user(request, user_id=0):
             user = User.objects.get(pk=user_id)
             #format into the user uc into a dictionary (necessary for conversion), return as JSON
             response = JsonResponse(model_to_dict(user))
-        except ObjectDoesNotExist:
+        except User.DoesNotExist:
             #If object cannot be found, relay information back with the user's ID.
             message = "User objecat at ID " + str(user_id) + " not found!"
             response = JsonResponse({'status':'false', 'message':message}, status=500)
@@ -55,7 +55,7 @@ def edit_user(request, user_id=0):
         # Finds the specific instance of the user
         try:
             user_instance = User.objects.get(pk=user_id)
-        except ObjectDoesNotExist:
+        except User.DoesNotExist:
             #If the user can't be found, return the invalid ID and an error message.
             message = "User at ID " + str(user_id) + " not found!"
             return JsonResponse({'status':'false', 'message':message}, status=500)
@@ -83,7 +83,7 @@ def delete_user(request, user_id=0):
         user_instance = User.objects.get(pk=user_id)
         user_instance.delete()
         return JsonResponse({'deleted':'True'})
-    except ObjectDoesNotExist:
+    except User.DoesNotExist:
         #Returns the invalid ID if not found.
         message = "User at ID " + str(user_id) + " not found! Deletion failed."
         return JsonResponse({'status':'false', 'message':message}, status=500)
@@ -111,7 +111,7 @@ def get_item(request, item_id=0):
         try:
             item = Item.objects.get(pk=item_id)
             response = JsonResponse(model_to_dict(item))
-        except ObjectDoesNotExist:
+        except Item.DoesNotExist:
             message = "Item at ID " + str(item_id) + " not found!"
             response = JsonResponse({'status':'false', 'message':message}, status=500)
         return response
@@ -124,7 +124,7 @@ def edit_item(request, item_id=0):
     if request.method == "POST":
         try:
             item_instance = Item.objects.get(pk=item_id)
-        except ObjectDoesNotExist:
+        except Item.DoesNotExist:
             message = "Object at ID " + str(item_id) + " not found!"
             return JsonResponse({'status':'false', 'message':message}, status=500)
         item = ItemForm(request.POST, instance=item_instance)
@@ -144,6 +144,6 @@ def delete_item(request, item_id=0):
         user_instance = Item.objects.get(pk=item_id)
         user_instance.delete()
         return JsonResponse({'deleted':'True'})
-    except ObjectDoesNotExist:
+    except Item.DoesNotExist:
         message = "User at ID " + str(item_id) + " not found!"
         return JsonResponse({'status':'false', 'message':message}, status=500)

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+</head>
+<body>
+{% if data %}
+{% for item in data %}
+<tr>{{ item.seller_username }}</tr>
+<tr>{{ item.item_type }}</tr><br>
+{% endfor %}
+{% endif %}
+</body>
+</html>

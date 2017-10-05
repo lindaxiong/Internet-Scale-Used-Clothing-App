@@ -46,7 +46,7 @@ def get_user(request, user_id=0):
         return response
     else:
         # Default response if not appropriate request type.
-        message = "Expected GET reqeust to retrieve user object - other type of request recieved"
+        message = "Expected GET request to retrieve user object - other type of request received"
         return JsonResponse({'status':'false','message':message}, status=500)
 
 

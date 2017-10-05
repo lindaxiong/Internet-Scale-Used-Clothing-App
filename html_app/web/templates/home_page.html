@@ -1,15 +1,30 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Home Page</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
 </head>
 <body>
-{% if data %}
-{% for item in data %}
-<tr>{{ item.seller_username }}</tr>
-<tr>{{ item.item_type }}</tr><br>
-{% endfor %}
-{% endif %}
+<div class="container">
+<div class="row">
+	<h1>Welcome to our used clothing app!</h1>
+</div>
+
+<div class="row">
+	<h2>Newest Items</h2>
+</div>
+	{% if data %}
+	{% for item in data %}
+	<tr>{{item.item_name}} | </tr>
+	<tr>{{ item.item_type }} | </tr>
+	<tr>Seller: {{ item.seller_username }} | </tr>
+	<tr><a href="{% url 'home' %}">Item Page</a></tr></br>   <!-- Placeholder link to show what the home page looks like, need to fix link url itself -->
+	<!--<tr><a href="{% url 'display-item' items_pk %}">Item Page</a></tr></br>-->
+	{% endfor %}
+	{% endif %}
+</div>
 </body>
 </html>

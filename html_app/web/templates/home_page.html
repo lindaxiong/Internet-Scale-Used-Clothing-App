@@ -20,9 +20,8 @@
 	{% for item in data %}
 	<tr>{{item.item_name}} | </tr>
 	<tr>{{ item.item_type }} | </tr>
-	<tr>Seller: {{ item.seller_username }} | </tr>
-	<tr><a href="{% url 'home' %}">Item Page</a></tr></br>   <!-- Placeholder link to show what the home page looks like, need to fix link url itself -->
-	<!--<tr><a href="{% url 'display-item' items_pk %}">Item Page</a></tr></br>-->
+	<tr>Seller: {{ item.seller_username }} | </tr> <!-- Placeholder link to show what the home page looks like, need to fix link url itself -->
+	<tr><a href="{% url 'display-item' item_id=item.item_id %}"> Item Page </a></tr></br>
 	{% endfor %}
 	{% endif %}
 </div>

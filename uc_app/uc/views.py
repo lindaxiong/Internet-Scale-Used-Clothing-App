@@ -36,8 +36,10 @@ def get_user(request, user_id=0):
         try:
             #Find the user instance
             user = User.objects.get(pk=user_id)
+            user_serial = model_to_dict(user)
+            user_serial['id'] = user.pk
             #format into the user uc into a dictionary (necessary for conversion), return as JSON
-            response = JsonResponse(model_to_dict(user))
+            response = JsonResponse(user_serial)
         except User.DoesNotExist:
             #If object cannot be found, relay information back with the user's ID.
             message = "User objecat at ID " + str(user_id) + " not found!"
@@ -110,7 +112,9 @@ def get_item(request, item_id=0):
     if request.method == "GET":
         try:
             item = Item.objects.get(pk=item_id)
-            response = JsonResponse(model_to_dict(item))
+            item_serial = model_to_dict(item)
+            item_serial['id'] = item.pk
+            response = JsonResponse(item_serial)
         except Item.DoesNotExist:
             message = "Item at ID " + str(item_id) + " not found!"
             response = JsonResponse({'status':'false', 'message':message}, status=500)

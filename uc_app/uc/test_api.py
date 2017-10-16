@@ -5,6 +5,9 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.forms import model_to_dict
 from django.core.exceptions import *
+from .forms import UserForm, ItemForm
+
+#unit tests for api methods
 
 class CreateUserTest(TestCase):
     def setUp(self):
@@ -12,7 +15,8 @@ class CreateUserTest(TestCase):
 
     def test_user_insufficient_fields(self):
         response = self.c.post(reverse('create-user'), {"first_name":"John", "last_name":"Smith"})
-        self.assertEquals(response.status_code, 500)
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':UserForm({"first_name":"John", "last_name":"Smith"}).errors}).content)
 
     def test_user_get_not_post(self):
         #Sends a get method instead of a post method
@@ -48,6 +52,7 @@ class EditUserTest(TestCase):
         self.c = Client()
         usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
         self.id = usr.pk
+        self.invalid_data = {"first_name":"John", "last_name":"Smithfo;ghaiehldjoiahrlknfpihaorfavahioejlnfahiojenlfasdiv;ho", "username":"jsmith1", "password":"h$4"}
 
     def test_edit_user_not_found(self):
         response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id+1)}), {"first_name":"John", "last_name":"Smith", "username":"jsmith1", "password":"h$4"})
@@ -58,8 +63,9 @@ class EditUserTest(TestCase):
         self.assertEquals(response.status_code, 500)
 
     def test_edit_user_invalid_change(self):
-        response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id)}), {"first_name":"John", "last_name":"Smithfo;ghaiehldjoiahrlknfpihaorfavahioejlnfahiojenlfasdiv;ho", "username":"jsmith1", "password":"h$4"})
-        self.assertEquals(response.status_code, 500)
+        response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id)}), self.invalid_data)
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':UserForm(self.invalid_data).errors}).content)
 
     def test_edit_user_valid(self):
         response = self.c.post(reverse('edit-user', kwargs={'user_id':(self.id)}), {"first_name":"John", "last_name":"Smith", "username":"jsmith1", "password":"h$4"})
@@ -104,7 +110,8 @@ class CreateItemTest(TestCase):
 
     def test_item_insufficient_fields(self):
         response = self.c.post(reverse('create-item'), {"item_name":"shirt", "item_price":7.7})
-        self.assertEquals(response.status_code, 500)
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':ItemForm({"item_name":"shirt", "item_price":7.7}).errors}).content)
 
     def test_item_get_not_post(self):
         response = self.c.get(reverse('create-item'), {"item_name":"shirt", "item_price":20.0, "seller":self.id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
@@ -162,6 +169,7 @@ class EditItemTest(TestCase):
         itm = Item.objects.create(item_name="shirt", item_price=20.0, seller=usr, brand="generic", description="blue", image_url="http://assets.academy.com/mgen/54/10779854.jpg", item_size="L", item_type="Top")
         self.usr_id = usr.pk
         self.id = itm.pk
+        self.invalid_data = {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"X", "item_type":"Top"}
 
     def test_edit_item_not_found(self):
         response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id+1)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"S", "item_type":"Top"})
@@ -172,8 +180,9 @@ class EditItemTest(TestCase):
         self.assertEquals(response.status_code, 500)
 
     def test_edit_item_invalid_change(self):
-        response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"X", "item_type":"Top"})
-        self.assertEquals(response.status_code, 500)
+        response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id)}), self.invalid_data)
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':ItemForm(self.invalid_data).errors}).content)
 
     def test_edit_item_valid(self):
         response = self.c.post(reverse('edit-item', kwargs={'item_id':(self.id)}), {"item_name":"shirt", "item_price":20.0, "seller":self.usr_id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"S", "item_type":"Top"})

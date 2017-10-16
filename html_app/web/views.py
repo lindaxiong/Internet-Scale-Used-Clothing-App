@@ -1,12 +1,30 @@
 from django.shortcuts import render
 import urllib.request
 import urllib.parse
+from web.forms import UserCreationForm
 import json
 import random
 
 EXP_API = 'http://exp-api:8000/api/v1/'
 
+def sign_up(request):
+    if request.method == "POST":
+        #doesn't return any error codes, don't need to try/catch 
+        create_usr_req = urllib.request.Request(url=EXP_API + 'user/create/', method='POST', data=request.body)
+        create_usr_json = urllib.request.urlopen(create_usr_req).read().decode('utf-8')
+        cu_resp = json.loads(create_usr_json)
+        form = UserCreationForm()
+        if cu_resp['status'] == 'success':
+            return render(request, 'signup.html', {'form':form, 'message':{'status_message':'User successfully created!'}})
+        else:
+            cu_resp['errors']['status_message'] = 'User creation failed!'
+            return render(request, 'signup.html', {'form':form, 'message':cu_resp['errors']})
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form':form})
 
+
+# FIX to do less overall work than right now - maybe change functionality?
 def home(request):
     resp = {}
     top_req = urllib.request.Request(EXP_API + 'items/get_by/item_type/Top/')

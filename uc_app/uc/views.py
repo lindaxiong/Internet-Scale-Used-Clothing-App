@@ -23,8 +23,8 @@ def create_user(request):
             # Return user ID JSON
             response = JsonResponse({'userID':saved_form.pk})
         else:
-            # Return an error response if invalid
-            response = HttpResponse(form.errors.as_json(), content_type="application/json", status=500)
+            # Return a response with errors to be reported
+            response = JsonResponse({'errors':form.errors})
         return response
     else:
         # Default response if not appropriate request type.
@@ -72,7 +72,7 @@ def edit_user(request, user_id=0):
         else:
             #Otherwise, format the errors in formatting as a JSON response and return it.
             #HTTP Response + json content and content_type flagged as json is a JSON Response.
-            response = HttpResponse(user.errors.as_json(), content_type="application/json", status=500)
+            response = JsonResponse({'errors':user.errors})
             return response
     else:
         # Default message if invalid rquest type
@@ -102,7 +102,7 @@ def create_item(request):
             saved_form = form.save()
             response = JsonResponse({'itemID':saved_form.pk})
         else:
-            response = HttpResponse(form.errors.as_json(), content_type="application/json", status=500)
+            response = JsonResponse({'errors':form.errors})
         return response
     else:
         message = "Expected POST request to create item objet - other type of request recieved"
@@ -127,6 +127,7 @@ def get_item(request, item_id=0):
 def get_item_by(request, field="", criteria=""):
     if request.method == "GET":
         items_as_json = {}
+        #based on the input field, filter items.
         if field == "item_size":
             items_as_json = serializers.serialize('json', Item.objects.filter(item_size=criteria))
         elif field == "item_type":
@@ -134,10 +135,12 @@ def get_item_by(request, field="", criteria=""):
         elif field == "brand":
             items_as_json = serializers.serialize('json', Item.objects.filter(item_type=criteria))
         elif field == "item_price":
+            #price defaults to finding items less than the price
             items_as_json = serializers.serialize('json', Item.objects.filter(item_type__lte=criteria))
         elif field == "description":
             items_as_json = serializers.serialize('json', Item.objects.filter(description__icontains=criteria))
         else:
+            #if the field doesn't exist, this is returned.
             items_as_json={'status':'false', 'message':'Not handled'}
             return JsonResponse(items_as_json, status=500)
         return HttpResponse(items_as_json, content_type="json")
@@ -157,7 +160,7 @@ def edit_item(request, item_id=0):
             saved_item = item.save()
             return JsonResponse({'itemID':saved_item.pk})
         else:
-            response = HttpResponse(item.errors.as_json(), content_type="application/json", status=500)
+            response = JsonResponse({'errors':item.errors})
             return response
     else:
         message = "Expected POST request to modify item object - other type of request recieved"

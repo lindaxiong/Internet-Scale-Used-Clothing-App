@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
-
+<!-- this page will render even when users are logged in. -->
 {% block content %}
+<!-- messages tell us if it failed or passed -->
 {% if message %}
+<!-- status - generally what happened (can be positive or negative)-->
 <h4>{{ message.status_message }}</h4>
+<!-- if our message also has fields based on the attributes, those are LISTS of the errors for each field -->
 {% if message.username %}
 <h4> Username Errors: </h4>
 {% for error in message.username %}

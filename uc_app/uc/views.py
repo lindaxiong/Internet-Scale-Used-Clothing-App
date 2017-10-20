@@ -2,11 +2,15 @@ from django.shortcuts import render
 from .models import *
 from .forms import *
 from django.forms import *
+from uc_app import settings
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.core.exceptions import *
 from django.core import serializers
 from django.views.decorators.http import *
+from django.contrib.auth import hashers
+import os
+import hmac
 import json
 
 
@@ -20,6 +24,8 @@ def create_user(request):
         if form.is_valid():
             #save the instance
             saved_form = form.save()
+            saved_form.password = hashers.make_password(form.cleaned_data['password'])
+            saved_form.save()
             # Return user ID JSON
             response = JsonResponse({'userID':saved_form.pk})
         else:
@@ -169,9 +175,53 @@ def edit_item(request, item_id=0):
 
 def delete_item(request, item_id=0):
     try:
-        user_instance = Item.objects.get(pk=item_id)
-        user_instance.delete()
+        item_instance = Item.objects.get(pk=item_id)
+        item_instance.delete()
         return JsonResponse({'deleted':'True'})
     except Item.DoesNotExist:
         message = "User at ID " + str(item_id) + " not found!"
         return JsonResponse({'status':'false', 'message':message}, status=500)
+
+def log_in(request):
+    if request.method == "POST":
+        try:
+            user_instance = User.objects.get(username=request.POST['username'])
+            if hashers.check_password(request.POST['password'], user_instance.password):
+                auth = hmac.new(
+                    key = settings.SECRET_KEY.encode('utf-8'),
+                    msg = os.urandom(32),
+                    digestmod = 'sha256',
+                ).hexdigest()
+                new_auth = AuthForm({'authenticator':auth, 'user_id':user_instance.pk})
+                if new_auth.is_valid():
+                    saved_auth = new_auth.save()
+                    return JsonResponse({'auth':saved_auth.authenticator})
+                #If, for some reason, the authenticator doesn't work ...
+                else:
+                    return JsonResponse({'errors':{'auth_error':'Failture to create authenticator'}})
+            #If the passwords don't match ...
+            else:
+                return JsonResponse({'errors':{'password':"Password is incorrect for the user " + user_instance.username}})
+        #If the username didn't have an associated user...
+        except User.DoesNotExist:
+            return JsonResponse({'errors':{'username':"Username didn't match any exisiting users in our databse"}})
+    #If it's not a post ...
+    else:
+        message = "Expected POST request to modify item object - other type of request recieved"
+        return JsonResponse({'status':'false','message':message}, status=500)
+
+def authenticate(request, auth_id):
+    if request.method == "GET":
+        try:
+            auth_instance = Authenticator.objects.get(authenticator=auth_id)
+            return JsonResponse({
+            'logged_in':True,
+            'username':auth_instance.user_id.username
+            })
+        #If the authenticator isn't there, user isn't logged in. 
+        except Authenticator.DoesNotExist:
+            return JsonResponse({'logged_in':False})
+    else:
+        return JsonResponse({'status':'false',
+        'message':'Expected GET, recieved POST'
+        }, status=500)

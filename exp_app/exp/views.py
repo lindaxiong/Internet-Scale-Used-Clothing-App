@@ -13,7 +13,7 @@ def create_user(request):
         create_usr_json = urllib.request.urlopen(create_usr_req).read().decode('utf-8')
         cu_resp = json.loads(create_usr_json)
         result_resp = {}
-        #if the returned dicitonary has "errors", something failed 
+        #if the returned dicitonary has "errors", something failed
         if 'errors' in cu_resp.keys():
             result_resp = {'status':'failed',
             'errors':cu_resp['errors']}
@@ -24,6 +24,26 @@ def create_user(request):
     except urllib.error.HTTPError:
         #Should only error out if get is submitted instead of POST.
         return JsonResponse({'status':'failed', 'errors':{'status_message':'invalid request type'}}, status=200)
+
+def log_in(request):
+    try:
+        login_reqest = urllib.request.Request(url=MODEL_API + 'user/login/', method='POST', data=request.body)
+        login_usr_json = urllib.request.urlopen(login_reqest).read().decode('utf-8')
+        login_resp = json.loads(login_usr_json)
+        result_resp = {}
+        #Will return with errors as one of the main keys if it fails due to field invalidation
+        if 'errors' in login_resp.keys():
+            result_resp = {'status':'failed',
+            'errors':login_resp['errors']}
+        #If the user was successfully logged in, we pass the authenticator upwards
+        else:
+            result_resp = {'status':'success',
+            'auth':login_resp['auth']}
+        return JsonResponse(result_resp, status=200)
+    except urllib.error.HTTPError:
+        #In theory this should only trigger if you submit a GET instead of a POST
+        return JsonResponse({'status':'failed', 'errors':{'status_message':'Failure while logging in'}}, status=200)
+
 
 def get_filtered_items(request, field, criteria):
     response = {'data': []}
@@ -86,6 +106,18 @@ def get_item_page_info(request, item_id=0):
     'item_size':item_resp['item_size'],
     'item_type':item_resp['item_type']})
     return JsonResponse(response, status=200)
+
+
+def authenticate(request, auth_id):
+    #Unless an error is returned, simply pass back up the results
+    try:
+        req = urllib.request.Request(url=MODEL_API + 'auth/' + auth_id + '/', method='GET')
+        json_rsp = urllib.request.urlopen(req).read().decode('utf-8')
+        #This seems redundnat, but you need to pass back a *new* JsonResponse to avoid errors for now. 
+        rsp = json.loads(json_rsp)
+        return JsonResponse(rsp)
+    except urllib.error.HTTPError:
+        return JsonResponse({'logged_in':False})
 
 
 # Create your views here.

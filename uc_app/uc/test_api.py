@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.forms import model_to_dict
 from django.core.exceptions import *
 from .forms import UserForm, ItemForm
+import json
 
 #unit tests for api methods
 
@@ -207,5 +208,49 @@ class DeleteItemTest(TestCase):
         self.assertEquals(response.status_code, 200)
         with self.assertRaises(ObjectDoesNotExist):
             Item.objects.get(pk=self.id)
+
+class LogInTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        self.c.post(reverse('create-user'), {'first_name':"John", 'last_name':"Smith", 'username':"jsmith", 'password':"h$4"})
+
+    def test_bad_username(self):
+        response = self.c.post(reverse('login'), {"username": "smitty", "password":"34322"})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':{'username':"Username didn't match any exisiting users in our databse"}}).content)
+
+    def test_bad_password(self):
+        response = self.c.post(reverse('login'), {"username": "jsmith", "password":"34322"})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, JsonResponse({'errors':{'password':"Password is incorrect for the user jsmith"}}).content)
+
+    def test_valid_login(self):
+        response = self.c.post(reverse('login'), {"username": "jsmith", "password":"h$4"})
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, 'auth')
+
+    def test_get_not_post(self):
+        response = self.c.get(reverse('login'), {"username": "jsmith", "password":"h$4"})
+        self.assertEquals(response.status_code, 500)
+
+class AuthenticateTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        #You hae to re-engineer urls because the password only hashes when created through the website
+        self.c.post(reverse('create-user'), {'first_name':"John", 'last_name':"Smith", 'username':"jsmith", 'password':"h$4"})
+        resp = self.c.post(reverse('login'), {'username':'jsmith', 'password':'h$4'})
+        self.auth_resp = json.loads(str(resp.content, 'utf-8'))
+
+    def test_post_not_get(self):
+        response = self.c.post(reverse('auth', kwargs={'auth_id':self.auth_resp['auth']}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_nonexistent_auth(self):
+        response = self.c.get(reverse('auth', kwargs={'auth_id':'ks4'}))
+        self.assertEquals(response.content, JsonResponse({'logged_in':False}).content)
+
+    def test_valid_auth(self):
+        response = self.c.get(reverse('auth', kwargs={'auth_id':self.auth_resp['auth']}))
+        self.assertContains(response, 'username')
 
 # Create your tests here.

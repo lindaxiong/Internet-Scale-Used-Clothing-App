@@ -23,7 +23,7 @@ Where resp is the dictionary of data values being returned to the rendered page.
 - Once you're sure of success, return to the top. The page should automatically revert back to logged-out mode upon deletion of the cookie.
 - Because you have to make a new API method, you also have to make tests for it! See the other Authentication tests and deletion tests to figure out how to ensure the basic use cases work. 
 
-## Create Listing
+### Create Listing
 - This page needs to ONLY render if the user is logged in, even if they directly type in the URL (see my login method for an example of this restriction).
 - Create a form for item creation, using all the relevant fields (ones that need to be filled in - you don't need to fill in user because you get that by authenticating, and you don't need to fill in the date because that's automatic). 
 - This will include a place to attach an image URL. 

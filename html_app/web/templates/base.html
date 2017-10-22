@@ -1,0 +1,33 @@
+<DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href='{% url 'home' %}'>UCC</a>
+    </div>
+    {% if logged_in %}
+    <ul class="nav navbar-nav">
+      <li><a href="#"> Welcome, {{ logged_in }}</a></li>
+    </ul>
+    {% endif %}
+    <ul class="nav navbar-nav navbar-right">
+      <!-- Right Icons change depending on whether or not you're logged in -->
+      {% if logged_in %}
+      <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+      <li><a href="#"><span class="glyphicon glyphicon-plus-sign"></span> Sell New Item </a></li>
+      {% else %}
+      <li><a href="{% url 'user-sign-up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+      <li><a href="{% url 'log-in'%}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+</head>
+
+{% block content %}
+
+{% endblock %}

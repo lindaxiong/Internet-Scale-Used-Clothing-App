@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- if message is returned, we have errors -->
+{% if message %}
+<!-- Every error set returned to this page should have a status message -->
+<h4>{{ message.status_message }}</h4>
+<!-- Errors are formatted where message['field'] = error descriptions -->
+{% if message.username %}
+<h4> Username Errors: </h4>
+{{ message.username }}
+{% endif %}
+{% if message.password %}
+<h4> Password Errors: </h4>
+{{ message.password }}
+{% endif %}
+{% if message.auth_error %}
+<h4> Authentication Errors: </h4>
+{{ message.auth_error }}
+{% endif %}
+{% endif %}
+<div class="row">
+<div class="center-block" style="width:200px">
+<!-- Only shows the form if the user is NOT logged in -->
+{% if not logged_in %}
+<h2>Log In</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Log In</button>
+</form>
+{% endif %}
+</div>
+</div>
+{% endblock %}

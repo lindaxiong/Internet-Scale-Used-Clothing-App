@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^user/delete/(?P<user_id>[0-9a-z]+)/$', views.delete_user, name='delete-user'),
     url(r'^item/create/$', views.create_item, name='create-item'),
     url(r'^item/get/(?P<item_id>[0-9a-z]+)/$', views.get_item, name='get-item'),
+    url(r'^item/get-by/(?P<field>[A-Za-z_]+)/(?P<criteria>[A-Za-z0-9]+)/$', views.get_item_by, name='get-item-by'),
     url(r'^item/edit/(?P<item_id>[0-9a-z]+)/$', views.edit_item, name='edit-item'),
     url(r'^item/delete/(?P<item_id>[0-9a-z]+)/$', views.delete_item, name='delete-item'),
+    url(r'^user/login/$', views.log_in, name='login'),
+    url(r'^auth/(?P<auth_id>[0-9a-z]+)/$', views.authenticate, name='auth'),
 ]

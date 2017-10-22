@@ -1,4 +1,4 @@
-[{"model":"v1.user",
+[{"model":"uc.user",
   "pk": 1,
   "fields": {
     "first_name":"Jack",
@@ -6,7 +6,7 @@
     "username":"jperales24",
     "password":"223HXX"}
   },
-{"model":"v1.user",
+{"model":"uc.user",
   "pk": 2,
   "fields": {
     "first_name":"Linda",
@@ -14,7 +14,7 @@
     "username":"lxiongxD",
     "password":"ff4shh"}
 },
-{"model":"v1.user",
+{"model":"uc.user",
     "pk": 3,
     "fields": {
       "first_name":"Andrew",
@@ -22,43 +22,88 @@
       "username":"barry.allen",
       "password":"bts360"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":4,
   "fields": {
     "item_name":"Longsleeve T-Shirt",
     "item_price":7.00,
+    "date_created":"2017-06-05T12:00:00+00:00",
     "seller":2,
     "buyer":null,
     "brand":"American Eagle",
     "description":"Blue with a big logo on the front",
-    "image_url":"https://www.wordans.com/wordansfiles/model_specifications/2015/8/31/121154/121154_original.jpg?1441032179",
+    "image_url":"http://www.uberprints.com/assets/images/products/jpg/med/CA3000_1_WHT_BLK.jpg",
     "item_size":"L",
     "item_type":"Top"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":5,
   "fields": {
     "item_name":"Faded Jeans",
     "item_price":20.60,
+    "date_created":"2017-06-25T12:00:00+00:00",
     "seller":1,
     "buyer":2,
     "brand":"Levi's",
     "description":"Faded, a few holes but still in the fashionable sense. 28 Waist.",
-    "image_url":"",
+    "image_url":"http://www.globalstock.pk/image/cache/data/jeans/baby%20gap/Gap-Kids-Adjustable-Waist-Girls-Blue-faded-Jeans-700x700.jpg",
     "item_size":"Other",
     "item_type":"Bottom"}
 },
-{"model":"v1.item",
+{"model":"uc.item",
   "pk":6,
   "fields": {
     "item_name":"White Vans",
     "item_price":15.00,
+    "date_created":"2017-05-05T12:00:00+00:00",
     "seller":3,
     "buyer":null,
     "brand":"Vans",
     "description":"A little over-sized, in good condition. Size 7.",
-    "image_url":"",
+    "image_url":"http://scene7.zumiez.com/is/image/zumiez/pdp_hero/Vans-Authentic-White-Skate-Shoes-_135644-front.jpg",
     "item_size":"Other",
     "item_type":"Footwear"}
+},
+{"model":"uc.item",
+  "pk":7,
+  "fields": {
+    "item_name":"Nike Hightops",
+    "item_price":30.00,
+    "date_created":"2017-04-15T12:00:00+00:00",
+    "seller":2,
+    "buyer":null,
+    "brand":"Nike",
+    "description":"Teeming with swag.",
+    "image_url":"https://i.pinimg.com/736x/b2/cb/2f/b2cb2f5d09d18b2c2bf96da310e6c6e4--nike-mens-shoes-shoes-men.jpg",
+    "item_size":"Other",
+    "item_type":"Footwear"}
+},
+{"model":"uc.item",
+  "pk":8,
+  "fields": {
+    "item_name":"Comfy Sweatpants",
+    "item_price":10.50,
+    "date_created":"2017-01-17T12:00:00+00:00",
+    "seller":1,
+    "buyer":null,
+    "brand":"Nike",
+    "description":"Bulky yet very comofortable",
+    "image_url":"https://i.pinimg.com/736x/6b/4a/0e/6b4a0eeba01ce46a6dcf99865d04b832--nike-tech-shorts-nike-swoosh-logo.jpg",
+    "item_size":"Other",
+    "item_type":"Bottom"}
+},
+{"model":"uc.item",
+  "pk":9,
+  "fields": {
+    "item_name":"Cute Blouse",
+    "item_price":4.00,
+    "date_created":"2017-03-04T12:00:00+00:00",
+    "seller":3,
+    "buyer":null,
+    "brand":"Unknown",
+    "description":"Still in good shape!",
+    "image_url":"https://i.pinimg.com/736x/af/0d/f7/af0df7cbe8210ea79d9e70dcc2567388--cosmetology-blouse-online.jpg",
+    "item_size":"M",
+    "item_type":"Top"}
 }
 ]

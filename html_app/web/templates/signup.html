@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+<!-- this page will render even when users are logged in. -->
+{% block content %}
+<!-- messages tell us if it failed or passed -->
+{% if message %}
+<!-- status - generally what happened (can be positive or negative)-->
+<h4>{{ message.status_message }}</h4>
+<!-- if our message also has fields based on the attributes, those are LISTS of the errors for each field -->
+{% if message.username %}
+<h4> Username Errors: </h4>
+{% for error in message.username %}
+  {{ error }}
+{% endfor %}
+{% endif %}
+{% if message.password %}
+<h3> Password Errors: </h3>
+{% for error in message.password %}
+  {{ error }}
+{% endfor %}
+{% endif %}
+{% if message.first_name %}
+<h3> First Name Errors: </h3>
+{% for error in message.first_name %}
+  {{ error }}
+{% endfor %}
+{% endif %}
+{% if message.last_name %}
+<h3> Last Name Errors: </h3>
+{% for error in message.last_name %}
+  {{ error }}
+{% endfor %}
+{% endif %}
+{% endif %}
+<div class="row">
+<div class="center-block" style="width:200px">
+<h2>Sign up</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Sign up</button>
+</form>
+</div>
+</div>
+{% endblock %}

@@ -44,24 +44,23 @@ def log_in(request):
         return JsonResponse(result_resp, status=200)
     except urllib.error.HTTPError:
         # In theory this should only trigger if you submit a GET instead of a POST
-        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Failure while logging in'}}, status=200)
+        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Failure while logging in - likely invalid request'}}, status=200)
 
 
-def log_out(request):
+def log_out(request, auth_id):
     try:
-        logout_request = urllib.request.Request(url=MODEL_API + 'user/logout/', method='POST', data=request.body)
+        logout_request = urllib.request.Request(url=MODEL_API + 'user/logout/' + auth_id + '/', method='POST')
         logout_json = urllib.request.urlopen(logout_request).read().decode('utf-8')
         logout_resp = json.loads(logout_json)
-        if 'errors' in logout_json:
-            result_resp = {'status': 'failed',
-                           'errors': logout_resp['errors']}
+        if logout_resp['logout'] == 'success':
+            result_resp = {'status': 'success'}
             # If the user was successfully logged in, we pass the authenticator upwards
         else:
-            result_resp = {'status': 'success',
-                           'auth_id': logout_resp['auth_id']}
+            result_resp = {'status': 'failed',
+                           'errors': login_resp['errors']}
         return JsonResponse(result_resp, status=200)
     except urllib.error.HTTPError:
-        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Failure while logging out'}}, status=200)
+        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Failure while logging out - likely invalid request'}}, status=200)
 
 def get_filtered_items(request, field, criteria):
     response = {'data': []}

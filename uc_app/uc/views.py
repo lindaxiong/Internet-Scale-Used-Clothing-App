@@ -215,16 +215,13 @@ def log_in(request):
         return JsonResponse({'status': 'false', 'message': message}, status=500)
 
 
-def log_out(request):
+def log_out(request, auth_id):
     if request.method == "POST":
         try:
-            auth_id = request.POST.get("auth_id")
-            if not auth_id:
-                return JsonResponse({'errors': "No auth id was passed in the request"})
             auth_instance = Authenticator.objects.get(authenticator=auth_id)
             auth_instance.delete()
             return JsonResponse({
-                'auth_id': auth_id
+                'logout':'success'
             })
         except Authenticator.DoesNotExist:
             return JsonResponse({'errors': "Username didn't match any existing users in our database"})

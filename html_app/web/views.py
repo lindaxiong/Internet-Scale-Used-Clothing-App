@@ -81,24 +81,20 @@ def log_out(request):
     if not auth.get('logged_in'):
         return render(request, 'home_page.html',
                       {'message': {'status_message': "You're not logged in!"}})
-    if request.method == "POST":
-        login_request = urllib.request.Request(url=EXP_API + 'user/logout/', method='POST', data=request.body)
-        logout_json = urllib.request.urlopen(login_request).read().decode('utf-8')
-        logout_resp = json.loads(logout_json)
-        # if the login was successful, get the authenticator and set the cookie to it.
-        if logout_resp['status'] == 'success':
-            authenticator = logout_resp['auth_id']
-            response = HttpResponseRedirect(reverse('home'))
-            response.delete_cookie('auth_id')
-            return response
+    auth = request.COOKIES.get('auth_id')
+    login_request = urllib.request.Request(url=EXP_API + 'user/logout/'+auth+'/', method='POST')
+    logout_json = urllib.request.urlopen(login_request).read().decode('utf-8')
+    logout_resp = json.loads(logout_json)
+    # if the logout was successful, get the authenticator and set the cookie to it.
+    if logout_resp['status'] == 'success':
+        response = HttpResponseRedirect(reverse('home'))
+        response.delete_cookie('auth_id')
+        return response
         # Otherwise, send the errors in the message (including a status message)
-        else:
-            if 'status_message' not in logout_resp['errors']:
-                logout_resp['errors']['status_message'] = 'Logout failed!'
-            return render(request, 'home_page.html', {'message': logout_resp['errors']})
-    # If it's a GET request, just render the form.
     else:
-        return render(request, 'home_page.html', {'message': 'Not logged out'})
+        if 'status_message' not in logout_resp['errors']:
+            logout_resp['errors']['status_message'] = 'Logout failed!'
+        return render(request, 'home_page.html', {'message': logout_resp['errors']})
 
 
 # FIX to do less overall work than right now - maybe change functionality?

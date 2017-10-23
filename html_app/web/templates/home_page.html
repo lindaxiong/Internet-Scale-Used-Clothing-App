@@ -10,7 +10,7 @@
   </div>
 {% if message %}
   {{ message.status_message }}
-{% endif %}
+{% else %}
 <div class="panel panel-default">
 	<h3 class="panel-heading">Tops</h3>
 <div class="panel-body">
@@ -78,4 +78,5 @@
 </div>
 </div>
 </body>
+{% endif %}
 {% endblock %}

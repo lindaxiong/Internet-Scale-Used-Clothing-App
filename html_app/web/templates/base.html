@@ -17,7 +17,7 @@
     <ul class="nav navbar-nav navbar-right">
       <!-- Right Icons change depending on whether or not you're logged in -->
       {% if logged_in %}
-      <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+      <li><a href="{% url 'log-out' %}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
       <li><a href="#"><span class="glyphicon glyphicon-plus-sign"></span> Sell New Item </a></li>
       {% else %}
       <li><a href="{% url 'user-sign-up' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

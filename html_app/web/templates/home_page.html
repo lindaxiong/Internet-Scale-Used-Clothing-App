@@ -8,7 +8,9 @@
       <p class="lead">A site for buying and selling used clothes.</p>
     </div>
   </div>
-
+{% if message %}
+  {{ message.status_message }}
+{% endif %}
 <div class="panel panel-default">
 	<h3 class="panel-heading">Tops</h3>
 <div class="panel-body">

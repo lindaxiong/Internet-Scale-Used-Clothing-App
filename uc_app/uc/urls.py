@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^item/edit/(?P<item_id>[0-9a-z]+)/$', views.edit_item, name='edit-item'),
     url(r'^item/delete/(?P<item_id>[0-9a-z]+)/$', views.delete_item, name='delete-item'),
     url(r'^user/login/$', views.log_in, name='login'),
-    url(r'^auth/(?P<auth_id>[0-9a-z]+)/$', views.authenticate, name='auth'),
+    url(r'^user/logout/$', views.log_out, name='logout'),
+    url(r'^auth/(?P<auth_id>[0-9a-z]+)/$', views.authenticate, name='auth_id'),
 ]

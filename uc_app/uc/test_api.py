@@ -227,7 +227,7 @@ class LogInTest(TestCase):
     def test_valid_login(self):
         response = self.c.post(reverse('login'), {"username": "jsmith", "password":"h$4"})
         self.assertEquals(response.status_code, 200)
-        self.assertContains(response, 'auth')
+        self.assertContains(response, 'auth_id')
 
     def test_get_not_post(self):
         response = self.c.get(reverse('login'), {"username": "jsmith", "password":"h$4"})
@@ -242,15 +242,15 @@ class AuthenticateTest(TestCase):
         self.auth_resp = json.loads(str(resp.content, 'utf-8'))
 
     def test_post_not_get(self):
-        response = self.c.post(reverse('auth', kwargs={'auth_id':self.auth_resp['auth']}))
+        response = self.c.post(reverse('auth_id', kwargs={'auth_id':self.auth_resp['auth_id']}))
         self.assertEquals(response.status_code, 500)
 
     def test_nonexistent_auth(self):
-        response = self.c.get(reverse('auth', kwargs={'auth_id':'ks4'}))
+        response = self.c.get(reverse('auth_id', kwargs={'auth_id':'ks4'}))
         self.assertEquals(response.content, JsonResponse({'logged_in':False}).content)
 
     def test_valid_auth(self):
-        response = self.c.get(reverse('auth', kwargs={'auth_id':self.auth_resp['auth']}))
+        response = self.c.get(reverse('auth_id', kwargs={'auth_id':self.auth_resp['auth_id']}))
         self.assertContains(response, 'username')
 
 # Create your tests here.

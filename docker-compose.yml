@@ -1,28 +1,31 @@
 models:
     image: tp33/django
+    container_name: models
     external_links:
       -  mysql:db
     volumes:
       - ./uc_app:/app
     ports:
       - "8001:8000"
-    command: bash -c "python manage.py makemigrations uc && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --working-directory ./ --reload-on-changes uc_app/wsgi.py"
+    command: bash -c "pip install -r requirements.txt && python manage.py makemigrations uc && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --working-directory ./ --reload-on-changes uc_app/wsgi.py --log-to-terminal"
 exp:
    image: tp33/django
+   container_name: exp
    links:
       - models:models-api
    ports:
       - "8002:8000"
    volumes:
       - ./exp_app:/app
-   command: "mod_wsgi-express start-server --reload-on-changes exp_app/wsgi.py"
+   command: bash -c "pip install -r requirements.txt && mod_wsgi-express start-server --reload-on-changes exp_app/wsgi.py --log-to-terminal"
 
 web:
    image: tp33/django
+   container_name: web
    links:
       - exp:exp-api
    ports:
       - "8000:8000"
    volumes:
       - ./html_app:/app
-   command: "mod_wsgi-express start-server --reload-on-changes html_app/wsgi.py"
+   command: bash -c "pip install -r requirements.txt && mod_wsgi-express start-server --reload-on-changes html_app/wsgi.py --log-to-terminal"

@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^user/login/$', views.log_in, name='log-in'),
     url(r'^user/logout/$', views.log_out, name='log-out'),
+    url(r'^item/create/$', views.create_listing, name='create-listing'),
 ]

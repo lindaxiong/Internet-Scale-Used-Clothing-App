@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import urllib.request
 import urllib.parse
-from web.forms import UserCreationForm, LogInForm
+from web.forms import UserCreationForm, LogInForm, ListingForm
 from django.http import *
 from django.urls import *
 import json
@@ -74,6 +74,40 @@ def log_in(request):
     else:
         form = LogInForm()
     return render(request, 'login.html', {'form': form})
+
+def create_listing(request):
+    resp = {}
+    auth = authenticate(request)
+    # check to see if the user is authenticated, returns with the username
+    if auth['logged_in']:
+        resp['logged_in'] = auth['username']
+
+    if not auth['logged_in']:
+        return render(request, 'login.html', {'message': {'status_message': "You must log in to create listing!"}})
+    if request.method == "POST":
+        # doesn't return any error codes, don't need to try/catch
+        create_listing_req = urllib.request.Request(url=EXP_API + 'items/create/', method='POST', data=request.body)
+        create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
+        cl_resp = json.loads(create_listing_json)
+        # creates an empty form to render on the page
+        resp['form'] = ListingForm()
+        # if the exp app returns success as status
+        if cl_resp['status'] == 'success':
+            # set this as the status message in the "message"
+            resp['message'] = {'status_message': 'Item successfully posted!'}
+        else:
+            # if there's already a status message, keep it
+            if 'status_message' not in cl_resp['errors']:
+                cl_resp['errors']['status_message'] = 'Listing creation failed!'
+            # message will include everything in errors. (including status message)
+            resp['message'] = cl_resp['errors']
+    else:
+        # If it's a get request just render a blank form to the page.
+        resp['form'] = ListingForm()
+    return render(request, 'create_listing.html', resp)
+
+
+
 
 
 def log_out(request):

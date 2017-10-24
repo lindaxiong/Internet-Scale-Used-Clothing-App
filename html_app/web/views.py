@@ -86,12 +86,13 @@ def create_listing(request):
         return render(request, 'login.html', {'message': {'status_message': "You must log in to create listing!"}})
     if request.method == "POST":
         # doesn't return any error codes, don't need to try/catch
-        create_listing_req = urllib.request.Request(url=EXP_API + 'items/create/', method='POST', data=request.body)
+        create_listing_req = urllib.request.Request(url=EXP_API + 'item/create/', method='POST', data=request.body)
         create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
         cl_resp = json.loads(create_listing_json)
         # creates an empty form to render on the page
         resp['form'] = ListingForm()
         # if the exp app returns success as status
+        print(cl_resp)
         if cl_resp['status'] == 'success':
             # set this as the status message in the "message"
             resp['message'] = {'status_message': 'Item successfully posted!'}
@@ -177,7 +178,7 @@ def home(request):
 
 
 def display_item(request, item_id=0):
-    req = urllib.request.Request(EXP_API + 'items/' + str(item_id) + '/')
+    req = urllib.request.Request(EXP_API + 'item/get_info/' + str(item_id) + '/')
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
     auth = authenticate(request)

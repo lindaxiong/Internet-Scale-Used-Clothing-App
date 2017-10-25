@@ -90,9 +90,13 @@ def create_listing(request):
         create_listing_req = urllib.request.Request(url=EXP_API + 'item/create/', method='POST', data=request.body)
         create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
         cl_resp = json.loads(create_listing_json)
-        # creates an empty form to render on the page
-        data = {'seller': auth['username']}
-        resp['form'] = ListingForm(data)
+        # creates an empty form to render to the page
+        
+        # started trying to make form with seller info pre-filled
+        # data = {'seller': auth['username']}
+        # resp['form'] = ListingForm(data)
+
+        resp['form'] = ListingForm()
         # if the exp app returns success as status
         print(cl_resp)
         if cl_resp['status'] == 'success':

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import urllib.request
 import urllib.parse
 import json
+import random
 
 MODEL_API = 'http://models-api:8000/api/v1/'
 
@@ -24,7 +25,7 @@ def create_user(request):
         return JsonResponse(result_resp, status=200)
     except urllib.error.HTTPError:
         # Should only error out if get is submitted instead of POST.
-        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'invalid request type'}}, status=200)
+        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Problem accessing data - likely invalid reuqest type'}}, status=200)
 
 
 def log_in(request):
@@ -94,7 +95,17 @@ def get_filtered_items(request, field, criteria):
                        'item_type': item['fields']['item_type'],
                        'item_id': item['pk']}
         response['data'].append(result_resp)
-    return JsonResponse(response, status=200)
+    response_list = {'data':[]}
+    if len(response['data']) > 4:
+        indexes = []
+        while len(response_list['data']) < 4:
+            index = random.randint(0, len(response['data']) - 1)
+            if index not in indexes:
+                response_list['data'].append(response['data'][index])
+                indexes.append(index)
+    else:
+        response_list = response
+    return JsonResponse(response_list, status=200)
 
 
 def get_item_page_info(request, item_id=0):

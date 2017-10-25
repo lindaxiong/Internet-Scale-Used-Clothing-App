@@ -12,7 +12,7 @@ class UserForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['item_name', 'item_price', 'seller', 'buyer', 'brand', 'description', 'item_size', 'item_type']
+        fields = ['item_name', 'item_price', 'seller', 'buyer', 'brand', 'description', 'item_size', 'item_type', 'image_url']
 
 class AuthForm(forms.ModelForm):
     class Meta:

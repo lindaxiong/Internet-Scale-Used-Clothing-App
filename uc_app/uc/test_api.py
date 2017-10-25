@@ -110,16 +110,20 @@ class CreateItemTest(TestCase):
         self.id = usr.pk
 
     def test_item_insufficient_fields(self):
-        response = self.c.post(reverse('create-item'), {"item_name":"shirt", "item_price":7.7})
+        response = self.c.post(reverse('create-item', kwargs={'username':'jsmith'}), {"item_name":"shirt", "item_price":7.7})
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.content, JsonResponse({'errors':ItemForm({"item_name":"shirt", "item_price":7.7}).errors}).content)
+        self.assertEquals(response.content, JsonResponse({'errors':ItemForm({"item_name":"shirt", "seller":self.id, "item_price":7.7}).errors}).content)
 
     def test_item_get_not_post(self):
-        response = self.c.get(reverse('create-item'), {"item_name":"shirt", "item_price":20.0, "seller":self.id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
+        response = self.c.get(reverse('create-item', kwargs={'username':'jsmith'}), {"item_name":"shirt", "item_price":20.0, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
         self.assertEquals(response.status_code, 500)
 
+    def test_invalid_user(self):
+        response = self.c.post(reverse('create-item', kwargs={'username':'pseduo'}), {"item_name":"shirt", "item_price":20.0, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
+        self.assertContains(response, 'seller')
+
     def test_item_valid(self):
-        response = self.c.post(reverse('create-item'), {"item_name":"shirt", "item_price":20.0, "seller":self.id, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
+        response = self.c.post(reverse('create-item', kwargs={'username':'jsmith'}), {"item_name":"shirt", "item_price":20.0, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
         self.assertEqual(response.status_code, 200)
 
 class GetItemTest(TestCase):

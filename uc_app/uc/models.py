@@ -38,7 +38,7 @@ class Item(models.Model):
     #
     # item_rating_stars = models.IntegerField()
     #
-    description = models.TextField()
+    description = models.TextField(blank=True)
     image_url = models.URLField(max_length=1000)
     ITEM_SIZES = (
     ('S', 'Small'),
@@ -63,5 +63,5 @@ class Authenticator(models.Model):
     authenticator = models.CharField(primary_key=True, max_length=100)
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+
     date_created = models.DateTimeField(auto_now_add=True)

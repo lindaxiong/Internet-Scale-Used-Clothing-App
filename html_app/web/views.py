@@ -85,6 +85,7 @@ def create_listing(request):
         return response
     if request.method == "POST":
         # doesn't return any error codes, don't need to try/catch
+<<<<<<< HEAD
         try:
             create_listing_req = urllib.request.Request(url=EXP_API + 'item/create/'+auth['username']+'/', method='POST', data=request.body)
             create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
@@ -92,6 +93,17 @@ def create_listing(request):
         except urllib.error.HTTPError:
             return render(request, 'home_page.html', {'message':{'status_message':'Something went wrong when processing your request'}})
         # creates an empty form to render on the page
+=======
+        create_listing_req = urllib.request.Request(url=EXP_API + 'item/create/', method='POST', data=request.body)
+        create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
+        cl_resp = json.loads(create_listing_json)
+        # creates an empty form to render to the page
+        
+        # started trying to make form with seller info pre-filled
+        # data = {'seller': auth['username']}
+        # resp['form'] = ListingForm(data)
+
+>>>>>>> 509b6c4642ba676e2c1155bf8cafaa2e9b6978f9
         resp['form'] = ListingForm()
         # if the exp app returns success as status
         if cl_resp['status'] == 'success':

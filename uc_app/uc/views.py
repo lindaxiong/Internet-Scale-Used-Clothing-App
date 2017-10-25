@@ -224,7 +224,7 @@ def log_out(request, auth_id):
                 'logout':'success'
             })
         except Authenticator.DoesNotExist:
-            return JsonResponse({'errors': "Username didn't match any existing users in our database"})
+            return JsonResponse({'errors': "Authenticator does not exist in our database!"})
     else:
         return JsonResponse({'status': 'false',
                              'message': 'Expected POST, recieved GET'

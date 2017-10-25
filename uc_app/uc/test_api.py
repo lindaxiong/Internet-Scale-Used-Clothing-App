@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
-from .models import User, Item
+from .models import User, Item, Authenticator
 from django.core import serializers
 from django.http import JsonResponse
 from django.forms import model_to_dict
@@ -242,15 +242,36 @@ class AuthenticateTest(TestCase):
         self.auth_resp = json.loads(str(resp.content, 'utf-8'))
 
     def test_post_not_get(self):
-        response = self.c.post(reverse('auth_id', kwargs={'auth_id':self.auth_resp['auth_id']}))
+        response = self.c.post(reverse('auth', kwargs={'auth_id':self.auth_resp['auth_id']}))
         self.assertEquals(response.status_code, 500)
 
     def test_nonexistent_auth(self):
-        response = self.c.get(reverse('auth_id', kwargs={'auth_id':'ks4'}))
+        response = self.c.get(reverse('auth', kwargs={'auth_id':'ks4'}))
         self.assertEquals(response.content, JsonResponse({'logged_in':False}).content)
 
     def test_valid_auth(self):
-        response = self.c.get(reverse('auth_id', kwargs={'auth_id':self.auth_resp['auth_id']}))
+        response = self.c.get(reverse('auth', kwargs={'auth_id':self.auth_resp['auth_id']}))
         self.assertContains(response, 'username')
 
+class LogoutTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        #You hae to re-engineer urls because the password only hashes when created through the website
+        self.c.post(reverse('create-user'), {'first_name':"John", 'last_name':"Smith", 'username':"jsmith", 'password':"h$4"})
+        resp = self.c.post(reverse('login'), {'username':'jsmith', 'password':'h$4'})
+        self.auth_resp = json.loads(str(resp.content, 'utf-8'))
+
+    def test_valid_logout(self):
+        response = self.c.post(reverse('logout', kwargs={'auth_id':self.auth_resp['auth_id']}))
+        self.assertContains(response, 'success')
+        with self.assertRaises(ObjectDoesNotExist):
+            Authenticator.objects.get(authenticator=self.auth_resp['auth_id'])
+
+    def test_logout_get_not_post(self):
+        response = self.c.get(reverse('logout', kwargs={'auth_id':self.auth_resp['auth_id']}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_bad_authenticator(self):
+        response = self.c.post(reverse('logout', kwargs={'auth_id':'q333s'}))
+        self.assertEquals(response.content, JsonResponse({'errors': "Authenticator does not exist in our database!"}).content)
 # Create your tests here.

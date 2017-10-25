@@ -24,6 +24,12 @@
   {{ error }}
 {% endfor %}
 {% endif %}
+{% if message.description %}
+<h3> Description Errors: </h3>
+{% for error in message.description %}
+  {{ error }}
+{% endfor %}
+{% endif %}
 {% if message.image_url %}
 <h3> Image URL Errors: </h3>
 {% for error in message.image_url %}

@@ -15,7 +15,10 @@ class LogInForm(forms.Form):
 class ListingForm(forms.Form):
     item_name = forms.CharField(max_length=30)
     item_price = forms.DecimalField(max_digits=10, decimal_places=2)
+    #seller field was put here to be pre-filled, not the optimal solution 
+    seller = forms.CharField(max_length=30)
     brand = forms.CharField(max_length=100)
+    description = forms.CharField()
     image_url = forms.URLField(max_length=1000)
     ITEM_SIZES = (
         ('S', 'Small'),

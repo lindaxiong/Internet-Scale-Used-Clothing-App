@@ -83,13 +83,15 @@ def create_listing(request):
         resp['logged_in'] = auth['username']
 
     if not auth['logged_in']:
-        return render(request, 'login.html', {'message': {'status_message': "You must log in to create listing!"}})
+        response = HttpResponseRedirect(reverse('log-in'))
+        return response
     if request.method == "POST":
         # doesn't return any error codes, don't need to try/catch
         create_listing_req = urllib.request.Request(url=EXP_API + 'item/create/', method='POST', data=request.body)
         create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
         cl_resp = json.loads(create_listing_json)
         # creates an empty form to render on the page
+        data = {'username': auth['username']}
         resp['form'] = ListingForm()
         # if the exp app returns success as status
         print(cl_resp)

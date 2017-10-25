@@ -136,15 +136,16 @@ def authenticate(request, auth_id):
     except urllib.error.HTTPError:
         return JsonResponse({'logged_in': False})
 
-def create_listing(request):
+def create_listing(request, username):
     try:
-        create_listing_req = urllib.request.Request(url=MODEL_API + 'item/create/', method='POST', data=request.body)
+        create_listing_req = urllib.request.Request(url=MODEL_API + 'item/create/'+username+'/', method='POST', data=request.body)
         # Passes the request sent to this method into the Model layer - .body is encoded rather than .POST
         create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
         cl_resp = json.loads(create_listing_json)
         result_resp = {}
         # if the returned dicitonary has "errors", something failed
         if 'errors' in cl_resp.keys():
+            print(cl_resp['errors'])
             result_resp = {'status': 'failed',
                            'errors': cl_resp['errors']}
         else:

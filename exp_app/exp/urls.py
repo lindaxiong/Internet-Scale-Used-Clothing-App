@@ -11,5 +11,5 @@ urlpatterns = [
     url(r'^user/login/$', views.log_in, name='log-in'),
     url(r'^user/logout/(?P<auth_id>[0-9a-z]+)/$', views.log_out, name='log-out'),
     url(r'^auth/(?P<auth_id>[0-9a-z]+)/$', views.authenticate, name='auth_id'),
-    url(r'^item/create/$', views.create_listing, name='create-listing'),
+    url(r'^item/create/(?P<username>.+)/$', views.create_listing, name='create-listing'),
 ]

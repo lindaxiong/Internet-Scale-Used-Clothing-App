@@ -100,14 +100,22 @@ def delete_user(request, user_id=0):
 
 # Item methods correspond 1:1 to User methods. Refer to user methods for use-cases.
 
-def create_item(request):
+def create_item(request, username):
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        post_values = request.POST.copy()
+        try:
+            print(username)
+            user_instance = User.objects.get(username=username.strip('/'))
+            post_values['seller'] = user_instance.pk
+        except User.DoesNotExist:
+            return JsonResponse({'errors':{'seller':'problem locating you in our database!'}})
+        form = ItemForm(post_values)
         response = {}
         if form.is_valid():
             saved_form = form.save()
             response = JsonResponse({'itemID': saved_form.pk})
         else:
+            print(form.errors)
             response = JsonResponse({'errors': form.errors})
         return response
     else:

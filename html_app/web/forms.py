@@ -1,6 +1,6 @@
 from django import forms
 
-#Forms for user creation, logging in, and listing creation. max_length is based off criteria specified in uc_app's models. 
+#Forms for user creation, logging in, and listing creation. max_length is based off criteria specified in uc_app's models.
 
 class UserCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30)
@@ -16,7 +16,6 @@ class ListingForm(forms.Form):
     item_name = forms.CharField(max_length=30)
     item_price = forms.DecimalField(max_digits=10, decimal_places=2)
     #seller field was put here to be pre-filled, not the optimal solution 
-    seller = forms.CharField(max_length=30)
     brand = forms.CharField(max_length=100)
     description = forms.CharField()
     image_url = forms.URLField(max_length=1000)

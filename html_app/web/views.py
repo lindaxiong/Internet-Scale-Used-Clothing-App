@@ -91,8 +91,8 @@ def create_listing(request):
         create_listing_json = urllib.request.urlopen(create_listing_req).read().decode('utf-8')
         cl_resp = json.loads(create_listing_json)
         # creates an empty form to render on the page
-        data = {'username': auth['username']}
-        resp['form'] = ListingForm()
+        data = {'seller': auth['username']}
+        resp['form'] = ListingForm(data)
         # if the exp app returns success as status
         print(cl_resp)
         if cl_resp['status'] == 'success':

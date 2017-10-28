@@ -185,6 +185,6 @@ def authenticate(request):
         req = urllib.request.Request(url=EXP_API + '/auth/' + auth + '/')
         resp_json = urllib.request.urlopen(req).read().decode('utf-8')
         resp = json.loads(resp_json)
-    except urllib.errors.HTTPError:
+    except urllib.error.HTTPError:
         resp = {'logged_in': False}
     return resp

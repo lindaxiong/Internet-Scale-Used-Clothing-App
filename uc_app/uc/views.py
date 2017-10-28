@@ -104,7 +104,6 @@ def create_item(request, username):
     if request.method == "POST":
         post_values = request.POST.copy()
         try:
-            print(username)
             user_instance = User.objects.get(username=username.strip('/'))
             post_values['seller'] = user_instance.pk
         except User.DoesNotExist:
@@ -113,9 +112,8 @@ def create_item(request, username):
         response = {}
         if form.is_valid():
             saved_form = form.save()
-            response = JsonResponse({'itemID': saved_form.pk})
+            response = JsonResponse({'item': model_to_dict(saved_form)})
         else:
-            print(form.errors)
             response = JsonResponse({'errors': form.errors})
         return response
     else:

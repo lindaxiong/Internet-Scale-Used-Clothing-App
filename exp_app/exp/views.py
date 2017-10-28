@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from kafka import KafkaProducer
+import json
 import urllib.request
 import urllib.parse
-import json
 import random
 
 MODEL_API = 'http://models-api:8000/api/v1/'
@@ -156,15 +157,19 @@ def create_listing(request, username):
         result_resp = {}
         # if the returned dicitonary has "errors", something failed
         if 'errors' in cl_resp.keys():
-            print(cl_resp['errors'])
             result_resp = {'status': 'failed',
                            'errors': cl_resp['errors']}
         else:
+            producer = KafkaProducer(bootstrap_servers='kafka:9092')
+            some_new_listing = cl_resp['item']
+            confirmation = producer.send('new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
+            if confirmation:
+                result_resp['verification'] = True
             result_resp = {'status': 'success',
-                           'itemID': cl_resp['itemID']}
+                           'itemID': cl_resp['item']['id']}
         return JsonResponse(result_resp, status=200)
     except urllib.error.HTTPError:
         # Should only error out if get is submitted instead of POST.
-        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'invalid request type'}}, status=200)
+        return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Invalid request type'}}, status=200)
 
 # Create your views here.

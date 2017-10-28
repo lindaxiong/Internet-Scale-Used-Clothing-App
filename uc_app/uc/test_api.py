@@ -125,6 +125,7 @@ class CreateItemTest(TestCase):
     def test_item_valid(self):
         response = self.c.post(reverse('create-item', kwargs={'username':'jsmith'}), {"item_name":"shirt", "item_price":20.0, "brand":"generic", "description":"blue", "image_url":"http://assets.academy.com/mgen/54/10779854.jpg", "item_size":"L", "item_type":"Top"})
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'item')
 
 class GetItemTest(TestCase):
     def setUp(self):

@@ -160,7 +160,7 @@ def create_listing(request, username):
             result_resp = {'status': 'failed',
                            'errors': cl_resp['errors']}
         else:
-            producer = KafkaProducer(bootstrap_servers='kafka:9092')
+            producer = KafkaProducer(bootstrap_servers='kafka:9092', api_version='0.9')
             some_new_listing = cl_resp['item']
             confirmation = producer.send('new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
             if confirmation:

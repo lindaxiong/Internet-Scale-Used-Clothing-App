@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Search Results</h3>
+        <p>Returned {{ total }} results</p>
+    </div>
+    <div class="panel-body">
+        {% if results %}
+            {% for item in results %}
+                {% if forloop.first %}
+                    <div class="row">
+                {% endif %}
+            <div class="col-xs-3">
+                <div class="card" style="width: 20rem;">
+                    <img class="card-img-top" src="{{ item.fields.image_url }}" length="200" width="175">
+                    <div class="card-block">
+                        <h4 class="card-title"> {{ item.fields.item_name }}</h4>
+                        <p class="card-text"> {{ item.fields.description }}</p>
+                        <a href="{% url 'display-item' item_id=item.pk %}" class="btn btn-primary">View
+                            Item</a>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.last %}
+                </div>
+            {% endif %}
+            {% endfor %}
+
+        {% endif %}
+    </div>
+</div>
+</body>
+{% endblock %}

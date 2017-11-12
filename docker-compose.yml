@@ -54,4 +54,4 @@ batch:
       - es:es
    volumes:
       - ./batch_files:/app 
-   command: bash -c "python indexer.py" 
+   command: bash -c "sleep 25; python indexer.py"

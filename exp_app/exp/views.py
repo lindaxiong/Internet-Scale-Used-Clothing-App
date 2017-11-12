@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from kafka import KafkaProducer
+import elasticsearch
 import json
 import urllib.request
 import urllib.parse
 import random
 
 MODEL_API = 'http://models-api:8000/api/v1/'
-
+es = elasticsearch.Elasticsearch([{'host': 'es', 'port': 9200}])
 
 def create_user(request):
     try:
@@ -148,6 +149,7 @@ def authenticate(request, auth_id):
     except urllib.error.HTTPError:
         return JsonResponse({'logged_in': False})
 
+
 def create_listing(request, username):
     try:
         create_listing_req = urllib.request.Request(url=MODEL_API + 'item/create/'+username+'/', method='POST', data=request.body)
@@ -172,4 +174,16 @@ def create_listing(request, username):
         # Should only error out if get is submitted instead of POST.
         return JsonResponse({'status': 'failed', 'errors': {'status_message': 'Invalid request type'}}, status=200)
 
-# Create your views here.
+
+def search_listings(request):
+    if request.method == 'GET':
+        keywords = request.GET.get('keywords')
+        query = {'query': {'query_string': {'query': keywords}}, 'size': 10}
+        try:
+            res_json = es.search(index='main_index', body=query)
+            return JsonResponse(res_json['hits'], status=200)
+        except elasticsearch.ElasticsearchException as e:
+            return JsonResponse({'detail': e.error}, status=400)
+
+
+

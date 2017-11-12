@@ -13,7 +13,7 @@ def update_indices(sc):
         some_new_listing = json.loads(message.value.decode('utf-8'))
         if some_new_listing:
             if 'password' in some_new_listing['fields']:
-                some_new_listing['fields'].pop('password', None) # Linda was the one who did the extra credit, so only apply to me xtra-credit: Have multiple topics/indexes in Kafka/elasticsearch for more fine-tune search/indexing functionality. (+3 points)
+                some_new_listing['fields'].pop('password', None) # Linda was the one who did the extra credit Have multiple topics/indexes in Kafka/elasticsearch for more fine-tune search/indexing functionality. (+3 points)
             if some_new_listing['model'] == 'uc.user':
                 es.index(index='main_index', doc_type='listing', id=some_new_listing['id'], body=some_new_listing)
                 es.index(index='user_index', doc_type='listing', id=some_new_listing['id'], body=some_new_listing)
@@ -22,7 +22,7 @@ def update_indices(sc):
                 es.index(index='main_index', doc_type='listing', id=some_new_listing['id'], body=some_new_listing)
     es.indices.refresh(index='listing_index')
     es.indices.refresh(index='main_index')
-    es.indices.refresh(index='listing_index')
+    es.indices.refresh(index='user_index')
     sch.enter(20, 1, update_indices, (sc,))
 
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         db = json.load(f)
     for some_new_listing in db:
         if 'password' in some_new_listing['fields']:
-            some_new_listing['fields'].pop('password', None)  # Linda was the one who did the extra credit, so only apply to me xtra-credit: Have multiple topics/indexes in Kafka/elasticsearch for more fine-tune search/indexing functionality. (+3 points)
+            some_new_listing['fields'].pop('password', None)
         if some_new_listing['model'] == 'uc.user':
             es.index(index='main_index', doc_type='listing', id=some_new_listing['pk'], body=some_new_listing)
             es.index(index='user_index', doc_type='listing', id=some_new_listing['pk'], body=some_new_listing)
@@ -46,6 +46,6 @@ if __name__ == '__main__':
             es.index(index='main_index', doc_type='listing', id=some_new_listing['pk'], body=some_new_listing)
     es.indices.refresh(index='listing_index')
     es.indices.refresh(index='main_index')
-    es.indices.refresh(index='listing_index')
+    es.indices.refresh(index='user_index')
     sch.enter(20, 1, update_indices, (sch,))
     sch.run()

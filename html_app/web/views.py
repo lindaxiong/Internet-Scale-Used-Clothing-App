@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import urllib.request
 import urllib.parse
+from urllib.parse import urlencode
 from web.forms import UserCreationForm, LogInForm, ListingForm
 from django.http import *
 from django.urls import *
@@ -72,6 +73,7 @@ def log_in(request):
     else:
         form = LogInForm()
     return render(request, 'login.html', {'form': form})
+
 
 def create_listing(request):
     resp = {}
@@ -188,3 +190,33 @@ def authenticate(request):
     except urllib.error.HTTPError:
         resp = {'logged_in': False}
     return resp
+
+
+def search_listings(request):
+    resp = {}
+    auth = authenticate(request)
+    if auth['logged_in']:
+        resp['logged_in'] = auth['username']
+    if request.GET.get('search_box') is not None:
+        params = {'keywords': request.GET.get('search_box', None)}
+        url = EXP_API + '/item/search?%s' % urlencode(params)
+        results = []
+        try:
+            req = urllib.request.Request(url=url)
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            resp.update(json.loads(resp_json))
+        except urllib.error.HTTPError as e:
+            resp['message'] = {'status_message': url}
+            return render(request, 'home_page.html', resp)
+        hits = resp['hits']
+        total = resp['total']
+        for hit in hits:
+            results.append(hit['_source'])
+        if results:
+            resp['results'] = results
+            resp['total'] = total
+            return render(request, 'search_results.html', resp)
+        else:
+            return render(request, 'search_results.html', resp)
+    else:
+        return render(request, 'home_page.html', resp)

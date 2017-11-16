@@ -34,8 +34,8 @@ if __name__ == '__main__':
             consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
             es = Elasticsearch([{'host': 'es', 'port': 9200}])
             connected = True
-        except e:
-            print(e)
+        except:
+            pass
     print('Loading batcher...')
     sch = sched.scheduler(time.time, time.sleep)
     db = {}

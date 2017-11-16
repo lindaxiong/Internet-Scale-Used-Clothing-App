@@ -50,7 +50,7 @@ haproxy:
     - web1:web1
     - web2:web2
   ports:
-    - '80:8000'
+    - "80:8000"
 
 kafka:
    image: spotify/kafka

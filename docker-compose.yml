@@ -55,3 +55,21 @@ batch:
    volumes:
       - ./batch_files:/app 
    command: bash -c "sleep 25; python indexer.py"
+
+selenium-chrome:
+  image: selenium/standalone-chrome
+  container_name: selenium-chrome
+  links:
+    - web:web
+  ports:
+    - "4444:4444"
+
+selenium-test:
+  image: tp33/django
+  container_name: selenium-test
+  links:
+    - selenium-chrome:selenium-chrome
+    - web:web
+  volumes:
+    - ./app/batch_files:/app
+  command: bash -c "pip install selenium==3.0.2 && python selenium.py"

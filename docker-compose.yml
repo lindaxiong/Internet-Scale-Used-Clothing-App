@@ -71,5 +71,5 @@ selenium-test:
     - selenium-chrome:selenium-chrome
     - web:web
   volumes:
-    - ./app/batch_files:/app
-  command: bash -c "pip install selenium==3.0.2 && python selenium.py"
+    - ./batch_files:/app
+  command: bash -c "pip install selenium==3.0.1 && chmod 777 chromedriver_unix && python tester.py"

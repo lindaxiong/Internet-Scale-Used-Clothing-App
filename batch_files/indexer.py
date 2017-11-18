@@ -28,8 +28,14 @@ def update_indices(sc):
 
 # indexing script to read messages from kafka and add them to elasticsearch
 if __name__ == '__main__':
-    consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
-    es = Elasticsearch([{'host': 'es', 'port': 9200}])
+    connected = False
+    while not connected:
+        try:
+            consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
+            es = Elasticsearch([{'host': 'es', 'port': 9200}])
+            connected = True
+        except:
+            pass
     print('Loading batcher...')
     sch = sched.scheduler(time.time, time.sleep)
     db = {}

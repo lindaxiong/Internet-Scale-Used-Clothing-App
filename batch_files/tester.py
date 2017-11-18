@@ -18,43 +18,29 @@ class AuthenticationTestCase(TestCase):
     def test_login(self):
         self.driver.get("http://104.131.127.229/user/login/")
         username = self.driver.find_element_by_id("id_username")
-        username.send_keys("abc")
+        username.send_keys("adinh")
 
         password = self.driver.find_element_by_id("id_password")
-        password.send_keys("abc")
+        password.send_keys("flash")
 
         self.driver.find_element_by_xpath("//button[@type='submit']").click()
 
-    # def test_logout(self):
-    #     self.driver.get("http://104.131.127.229/user/login/")
-    #     username = self.driver.find_element_by_id("id_username")
-    #     username.send_keys("abc")
-    #
-    #     password = self.driver.find_element_by_id("id_password")
-    #     password.send_keys("abc")
-    #
-    #     self.driver.find_element_by_xpath("//button[@type='submit']").click()
-    #
-    #     self.driver.implicitly_wait(10)
-    #
-    #     self.driver.find_element_by_xpath("//a[@href='/user/logout/']").click()
-    #
-    # def test_search(self):
-    #     self.driver.get("http://104.131.127.229/user/login/")
-    #     username = self.driver.find_element_by_id("id_username")
-    #     username.send_keys("abc")
-    #
-    #     password = self.driver.find_element_by_id("id_password")
-    #     password.send_keys("abc")
-    #
-    #     self.driver.find_element_by_xpath("//button[@type='submit']").click()
-    #
-    #     elem = self.driver.find_element_by_name('search_box')
-    #     elem.send_keys('jacket')
-    #
-    #     self.driver.implicitly_wait(10)
-    #
-    #     self.driver.find_element_by_xpath("//a[@href='/item/display/1/']").click()
+    def test_sign_up(self):
+        self.driver.get("http://104.131.127.229/user/signup")
+
+        username = self.driver.find_element_by_id("id_first_name")
+        username.send_keys("linda")
+
+        password = self.driver.find_element_by_id("id_last_name")
+        password.send_keys("jiong")
+
+        username = self.driver.find_element_by_id("id_username")
+        username.send_keys("linda")
+
+        password = self.driver.find_element_by_id("id_password")
+        password.send_keys("jiong")
+
+        self.driver.find_element_by_xpath("//button[@type='submit']").click()
 
     def tearDown(self):
         self.driver.close()

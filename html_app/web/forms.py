@@ -10,7 +10,7 @@ class UserCreationForm(forms.Form):
 
 class LogInForm(forms.Form):
     username = forms.CharField(max_length=40)
-    password = forms.CharField(max_length=100)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput())
 
 class ListingForm(forms.Form):
     item_name = forms.CharField(max_length=30)

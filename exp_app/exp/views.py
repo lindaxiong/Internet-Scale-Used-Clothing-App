@@ -180,10 +180,8 @@ def search_listings(request):
         keywords = request.GET.get('keywords')
         query = {'query': {'query_string': {'query': keywords}}, 'size': 10}
         try:
-            res_json = es.search(index='main_index', body=query)
+            res_json = es.search(index='listing_index', body=query)
             return JsonResponse(res_json['hits'], status=200)
         except elasticsearch.ElasticsearchException as e:
+            print(e.error)
             return JsonResponse({'detail': e.error}, status=400)
-
-
-

@@ -19,7 +19,7 @@
                     <div class="card-block">
                         <h4 class="card-title"> {{ item.fields.item_name }}</h4>
                         <p class="card-text"> {{ item.fields.description }}</p>
-                        <a href="{% url 'display-item' item_id=item.pk %}" class="btn btn-primary">View
+                        <a href="{% url 'display-item' item_id=item.id %}" class="btn btn-primary">View
                             Item</a>
                     </div>
                 </div>

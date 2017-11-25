@@ -74,13 +74,13 @@ batch:
       - es:es
    volumes:
       - ./batch_files:/app
-   command: bash -c "sleep 25; python indexer.py"
+   command: bash -c "python indexer.py"
 
 selenium-chrome:
   image: selenium/standalone-chrome
   container_name: selenium-chrome
   links:
-    - web:web
+    - web1:web1
   ports:
     - "4444:4444"
 
@@ -89,7 +89,7 @@ selenium-test:
   container_name: selenium-test
   links:
     - selenium-chrome:selenium-chrome
-    - web:web
+    - web1:web1
   volumes:
     - ./batch_files:/app
   command: bash -c "pip install selenium==3.0.1 && python /app/tester.py"

@@ -21,9 +21,9 @@ exp:
       - ./exp_app:/app
    command: bash -c "mod_wsgi-express start-server --reload-on-changes exp_app/wsgi.py"
 
-web:
+web1:
    image: tp33/django
-   container_name: web
+   container_name: web1
    links:
       - exp:exp-api
    ports:
@@ -31,6 +31,26 @@ web:
    volumes:
       - ./html_app:/app
    command: bash -c "mod_wsgi-express start-server --reload-on-changes html_app/wsgi.py"
+
+web2:
+   image: tp33/django
+   container_name: web2
+   links:
+      - exp:exp-api
+   ports:
+      - "8004:8000"
+   volumes:
+      - ./html_app:/app
+   command: bash -c "mod_wsgi-express start-server --reload-on-changes html_app/wsgi.py"
+
+haproxy:
+  build: ./lb
+  container_name: lb
+  links:
+    - web1:web1
+    - web2:web2
+  ports:
+    - "80:8000"
 
 kafka:
    image: spotify/kafka
@@ -53,5 +73,23 @@ batch:
       - kafka:kafka
       - es:es
    volumes:
-      - ./batch_files:/app 
+      - ./batch_files:/app
    command: bash -c "sleep 25; python indexer.py"
+
+selenium-chrome:
+  image: selenium/standalone-chrome
+  container_name: selenium-chrome
+  links:
+    - web:web
+  ports:
+    - "4444:4444"
+
+selenium-test:
+  image: tp33/django
+  container_name: selenium-test
+  links:
+    - selenium-chrome:selenium-chrome
+    - web:web
+  volumes:
+    - ./batch_files:/app
+  command: bash -c "pip install selenium==3.0.1 && python /app/tester.py"

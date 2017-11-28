@@ -110,12 +110,22 @@ def get_filtered_items(request, field, criteria):
     return JsonResponse(response_list, status=200)
 
 
-def get_item_page_info(request, item_id=0):
+def get_item_page_info(request, item_id=0, username=False):
     response = {'data': []}
     try:
         item_req = urllib.request.Request(MODEL_API + 'item/get/' + str(item_id) + '/')
         item_resp_json = urllib.request.urlopen(item_req).read().decode('utf-8')
         item_resp = json.loads(item_resp_json)
+        if username:
+            try:
+                user_req = urllib.request.Request(MODEL_API + 'user/get-by-name/' + str(username) + '/')
+                user_resp_json = urllib.request.urlopen(user_req).read().decode('utf-8')
+                user_resp = json.loads(user_resp_json)
+                producer = KafkaProducer(bootstrap_servers='kafka:9092', api_version='0.9')
+                data = str(item_resp['id']) + ";" + str(user_resp['id']) + "\n"
+                producer.send('viewed-items-topic', data.encode('utf-8'))
+            except urllib.error.HTTPError:
+                pass
     except urllib.error.HTTPError:
         # auto-returns if it can't find the associated item
         response['data'].append({'item_name': "Item Not Found"})

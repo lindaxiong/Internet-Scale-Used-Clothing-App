@@ -38,6 +38,24 @@ def create_user(request):
         return JsonResponse({'status': 'false', 'message': message}, status=500)
 
 
+def get_user_by_name(request, username=''):
+    if request.method == "GET":
+        try:
+            user = User.objects.get(username=username)
+            user_serial = model_to_dict(user)
+            user_serial['id'] = user.pk
+            response = JsonResponse(user_serial)
+        except User.DoesNotExist:
+            # If object cannot be found, relay information back with the user's ID.
+            message = "User objecat at ID " + str(user_id) + " not found!"
+            response = JsonResponse({'status': 'false', 'message': message}, status=500)
+        # JSON Response requires a dictionary input
+        return response
+    else:
+        # Default response if not appropriate request type.
+        message = "Expected GET request to retrieve user object - other type of request received"
+        return JsonResponse({'status': 'false', 'message': message}, status=500)
+
 def get_user(request, user_id=0):
     if request.method == "GET":
         try:

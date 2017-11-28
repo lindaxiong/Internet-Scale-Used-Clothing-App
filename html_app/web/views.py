@@ -166,15 +166,19 @@ def home(request):
 
 
 def display_item(request, item_id=0):
+    resp = {}
+    auth = authenticate(request)
     try:
-        req = urllib.request.Request(EXP_API + 'item/get_info/' + str(item_id) + '/')
+        if auth['logged_in']:
+            req = urllib.request.Request(EXP_API + 'item/get_info/' + str(item_id) + '/' + str(auth['username']) + '/')
+        else:
+            req = urllib.request.Request(EXP_API + 'item/get_info/' + str(item_id) + '/')
         resp_json = urllib.request.urlopen(req).read().decode('utf-8')
         resp = json.loads(resp_json)
+        if auth['logged_in']:
+            resp['logged_in'] = auth['username']
     except urllib.error.HTTPError:
         return render(request, 'home_page.html', {'message':{'status_message':'Something went wrong when processing your request!'}})
-    auth = authenticate(request)
-    if auth['logged_in']:
-        resp['logged_in'] = auth['username']
     return render(request, 'item_page.html', resp)
 
 

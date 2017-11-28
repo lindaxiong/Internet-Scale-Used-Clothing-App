@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     url(r'^user/create/$', views.create_user, name='create-user'),
     url(r'^user/get/(?P<user_id>[0-9a-z]+)/$', views.get_user, name='get-user'),
+    url(r'^user/get-by-name/(?P<username>.+)/$', views.get_user_by_name, name='get-user-by-name'),
     url(r'^user/edit/(?P<user_id>[0-9a-z]+)/$', views.edit_user, name='edit-user'),
     url(r'^user/delete/(?P<user_id>[0-9a-z]+)/$', views.delete_user, name='delete-user'),
     url(r'^item/create/(?P<username>.+)$', views.create_item, name='create-item'),

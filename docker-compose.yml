@@ -90,6 +90,8 @@ spark-master:
   command: bash -c "chmod 775 /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.master.Master -h spark-master"
   container_name: spark-master
   hostname: spark-master
+  external_links:
+    - mysql:db
   environment:
     MASTER: spark://spark-master:7077
     SPARK_CONF_DIR: /conf
@@ -102,27 +104,32 @@ spark-master:
     - 7006
     - 7077
     - 6066
-  external_links:
-    - mysql:db
   ports:
     - 4040:4040
     - 6066:6066
     - 7077:7077
     - 8080:8080
   volumes:
-    - ./batch_files_2:/tmp/data
+    - ./batch_files_2/logs.txt:/tmp/data/logs.txt
+    - ./batch_files_2/item_rec.py:/tmp/data/item_rec.py
+    - ./batch_files_2/install_reqs.sh:/tmp/data/install_reqs.sh
+
 
 spark-worker:
   image: gettyimages/spark
   command: bash -c "chmod 775 /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
   container_name: spark-worker
   hostname: spark-worker
+  external_links:
+    - mysql:db
   environment:
     SPARK_CONF_DIR: /conf
     SPARK_WORKER_CORES: 2
     SPARK_WORKER_MEMORY: 512m
     SPARK_WORKER_PORT: 8881
     SPARK_WORKER_WEBUI_PORT: 8081
+  links:
+    - spark-master
   expose:
     - 7012
     - 7013
@@ -133,7 +140,9 @@ spark-worker:
   ports:
     - 8081:8081
   volumes:
-    - ./batch_files_2:/tmp/data
+    - ./batch_files_2/logs.txt:/tmp/data/logs.txt
+    - ./batch_files_2/item_rec.py:/tmp/data/item_rec.py
+    - ./batch_files_2/install_reqs.sh:/tmp/data/install_reqs.sh
 
 selenium-chrome:
   image: selenium/standalone-chrome

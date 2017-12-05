@@ -9,6 +9,7 @@ from django.core.exceptions import *
 from django.core import serializers
 from django.views.decorators.http import *
 from django.contrib.auth import hashers
+from django.db import connection
 import os
 import hmac
 import json
@@ -145,7 +146,13 @@ def get_item(request, item_id=0):
             item = Item.objects.get(pk=item_id)
             item_serial = model_to_dict(item)
             item_serial['id'] = item.pk
-            item_serial['recommendations'] = [{'item_name':'Jeans', 'item_id':2}, {'item_name':'Cute Shoes', 'item_id':3}]
+            try:
+                with connection.cursor() as cursor:
+                    selection = cursor.execute('SELECT recommended_item_pks FROM marketplace_recommendation WHERE item_pk=%s' %item.pk)
+                    print(selection)
+                    item_serial['recommendations'] = selection
+            except:
+                item_serial['recommendations'] = []
             response = JsonResponse(item_serial)
         except Item.DoesNotExist:
             message = "Item at ID " + str(item_id) + " not found!"

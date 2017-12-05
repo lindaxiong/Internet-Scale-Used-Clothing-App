@@ -165,7 +165,9 @@ class GetItemTest(TestCase):
     def test_get_item_valid(self):
         response = self.c.get(reverse('get-item', kwargs={'item_id':(self.id)}))
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.content, JsonResponse(model_to_dict(Item.objects.get(pk=self.id))).content)
+        initial_set = model_to_dict(Item.objects.get(pk=self.id))
+        initial_set['recommendations'] = []
+        self.assertEquals(response.content, JsonResponse(initial_set).content)
 
 class GetItemByTest(TestCase):
     def setUp(self):

@@ -47,7 +47,7 @@ def get_user_by_name(request, username=''):
             response = JsonResponse(user_serial)
         except User.DoesNotExist:
             # If object cannot be found, relay information back with the user's ID.
-            message = "User objecat at ID " + str(user_id) + " not found!"
+            message = "User objecat with username " + username + " not found!"
             response = JsonResponse({'status': 'false', 'message': message}, status=500)
         # JSON Response requires a dictionary input
         return response
@@ -145,6 +145,7 @@ def get_item(request, item_id=0):
             item = Item.objects.get(pk=item_id)
             item_serial = model_to_dict(item)
             item_serial['id'] = item.pk
+            item_serial['recommendations'] = [{'item_name':'Jeans', 'item_id':2}, {'item_name':'Cute Shoes', 'item_id':3}]
             response = JsonResponse(item_serial)
         except Item.DoesNotExist:
             message = "Item at ID " + str(item_id) + " not found!"

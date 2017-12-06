@@ -3,7 +3,7 @@ from pyspark import SparkContext
 import sched
 import time
 
-sc = SparkContext("spark://spark-master:7077", "Recommended Items")
+sc = SparkContext("spark://spark-master:6066", "RecommendedItems")
 db = MySQLdb.connect(
     host='db',
     user='www',

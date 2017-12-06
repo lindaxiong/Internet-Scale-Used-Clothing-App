@@ -13,6 +13,10 @@
             <h3> Seller: {{ data.0.seller_username }} </h3>
             <h3> Type: {{ data.0.item_type }} | Size: {{ data.0.item_size }} </h3>
             <p> {{ data.0.description }} </p>
+            <h3> You might also like: </h3>
+            {% for item in recommendations %}
+            <a href="{% url 'display-item' item_id=item.item_id %}" class="btn btn-primary"> {{ item.item_name }}</a>
+            {% endfor %}
         </div>
         {% endif %}
     </div>

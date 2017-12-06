@@ -117,7 +117,7 @@ spark-master:
 
 spark-worker:
   image: gettyimages/spark
-  command: bash -c "chmod 775 /tmp/data/install_reqs.sh && /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
+  command: bash -c "chmod 775 /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
   container_name: spark-worker
   hostname: spark-worker
   external_links:

@@ -28,6 +28,26 @@ class CreateUserTest(TestCase):
         response = self.c.post(reverse('create-user'), {"first_name":"John", "last_name":"Smith", "username":"jsmith", "password":"h$4"})
         self.assertEqual(response.status_code, 200)
 
+class GetUserByNameTest(TestCase):
+    def setUp(self):
+        self.c = Client()
+        usr = User.objects.create(first_name="John", last_name="Smith", username="jsmith", password="h$4")
+        self.id = usr.pk
+
+    def test_user_not_found(self):
+        response = self.c.get(reverse('get-user-by-name', kwargs={'username':'herb'}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_get_user_post_not_get(self):
+        response = self.c.post(reverse('get-user-by-name', kwargs={'username':'jsmith'}))
+        self.assertEquals(response.status_code, 500)
+
+    def test_get_user_valid(self):
+        response = self.c.get(reverse('get-user-by-name', kwargs={'username':'jsmith'}))
+        self.assertEquals(response.status_code, 200)
+        #Replicates the JSON Response format as the easiest way to verify output validity.
+        self.assertEquals(response.content, JsonResponse(model_to_dict(User.objects.get(pk=self.id))).content)
+
 class GetUserTest(TestCase):
     def setUp(self):
         self.c = Client()
@@ -145,7 +165,9 @@ class GetItemTest(TestCase):
     def test_get_item_valid(self):
         response = self.c.get(reverse('get-item', kwargs={'item_id':(self.id)}))
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.content, JsonResponse(model_to_dict(Item.objects.get(pk=self.id))).content)
+        initial_set = model_to_dict(Item.objects.get(pk=self.id))
+        initial_set['recommendations'] = []
+        self.assertEquals(response.content, JsonResponse(initial_set).content)
 
 class GetItemByTest(TestCase):
     def setUp(self):

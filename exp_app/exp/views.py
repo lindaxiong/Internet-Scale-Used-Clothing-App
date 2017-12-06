@@ -145,6 +145,7 @@ def get_item_page_info(request, item_id=0, username=False):
                              'image_url': item_resp['image_url'],
                              'item_size': item_resp['item_size'],
                              'item_type': item_resp['item_type']})
+    response['recommendations'] = item_resp['recommendations']
     return JsonResponse(response, status=200)
 
 

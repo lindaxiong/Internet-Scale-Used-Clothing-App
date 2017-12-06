@@ -87,7 +87,7 @@ batch_2:
 
 spark-master:
   image: gettyimages/spark
-  command: bash -c "chmod 775 /tmp/data/install_reqs.sh && /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.master.Master -h spark-master; python /tmp/data/item_rec.py"
+  command: bash -c "chmod 775 /tmp/data/install_reqs.sh && /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.master.Master -h spark-master"
   container_name: spark-master
   hostname: spark-master
   external_links:
@@ -117,7 +117,7 @@ spark-master:
 
 spark-worker:
   image: gettyimages/spark
-  command: bash -c "chmod 775 /tmp/data/install_reqs.sh && bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
+  command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
   container_name: spark-worker
   hostname: spark-worker
   external_links:

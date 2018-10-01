@@ -1,6 +1,6 @@
-# CS4501 Project - Used Clothing App
+# Used Clothing App
 
-## Updated User Stories fro Project 7:
+## Updated User Stories for Project 7:
 
 As a user selling items, I want to be able to..
 - Post my items for other users to see.

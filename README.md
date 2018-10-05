@@ -1,6 +1,6 @@
 # Used Clothing App
 
-## Updated User Stories for Project 7:
+## User Stories
 
 As a user selling items, I want to be able to..
 - Post my items for other users to see.
